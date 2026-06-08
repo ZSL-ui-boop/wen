@@ -79,7 +79,7 @@ export function ChartAreaInteractive({
   const isBigScreen = variant === 'bigscreen'
   const { t, i18n } = useTranslation('home')
   const isMobile = useIsMobile()
-  const [timeRange, setTimeRange] = React.useState('90d')
+  const [timeRange, setTimeRange] = React.useState('7d')
   const dateLocale = i18n.language?.startsWith('zh') ? 'zh-CN' : 'en-US'
 
   React.useEffect(() => {
