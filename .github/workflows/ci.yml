@@ -34,7 +34,7 @@ jobs:
         uses: actions/upload-artifact@v4
         with:
           name: fs-admin-jar
-          path: free-fs-master/fs-admin/target/fs-admin-*.jar
+          path: free-fs-master/fs-admin/target/fs-admin.jar
           if-no-files-found: error
 
   frontend:
@@ -53,7 +53,7 @@ jobs:
       - uses: actions/setup-node@v4
         with:
           node-version: '22'
-          cache: 'pnpm'
+          cache: pnpm
           cache-dependency-path: free-fs-frontend-master/pnpm-lock.yaml
 
       - name: Install dependencies
@@ -65,4 +65,4 @@ jobs:
       - name: Build
         run: pnpm build
         env:
-          VITE_API_BASE_URL: http://localhost:8081
+          VITE_API_BASE_URL: ${{ vars.VITE_API_BASE_URL || 'http://localhost:8081' }}

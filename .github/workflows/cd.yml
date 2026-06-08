@@ -1,11 +1,11 @@
-# 手动触发：构建 Docker 镜像（需自行配置 Registry 推送 secrets）
+# 手动触发：构建 Docker 镜像
 name: CD
 
 on:
   workflow_dispatch:
     inputs:
       push_image:
-        description: 'Push image to registry (requires secrets)'
+        description: Push image to registry
         required: false
         default: 'false'
         type: choice

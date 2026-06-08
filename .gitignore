@@ -1,17 +1,14 @@
-# Dependencies & build output
 **/node_modules/
 **/target/
 **/dist/
+deploy-output/
 
-# Local env & secrets
 **/.env.local
+**/.env.production
 **/application-local.yml
 
-# IDE
 .idea/
 *.iml
 .vscode/
-
-# OS
 .DS_Store
 Thumbs.db
