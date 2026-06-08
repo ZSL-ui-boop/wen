@@ -54,23 +54,46 @@ jobs:
         env:
           SERVER_HOST: ${{ secrets.SERVER_HOST }}
           SERVER_USER: ${{ secrets.SERVER_USER }}
-          SERVER_PORT: ${{ secrets.SERVER_PORT || '22' }}
+          SERVER_PORT: ${{ secrets.SERVER_PORT }}
           SERVER_PRIVATE_KEY: ${{ secrets.SERVER_PRIVATE_KEY }}
           DEPLOY_PATH: ${{ secrets.DEPLOY_PATH }}
         run: |
           set -euo pipefail
+          SERVER_PORT="${SERVER_PORT:-22}"
+
           for var in SERVER_HOST SERVER_USER SERVER_PRIVATE_KEY DEPLOY_PATH; do
             if [ -z "${!var}" ]; then
-              echo "缺少 Secret: $var"
+              echo "::error::缺少 Secret: $var"
               exit 1
             fi
           done
 
           install -m 700 -d ~/.ssh
-          printf '%s\n' "$SERVER_PRIVATE_KEY" > ~/.ssh/id_rsa
+          echo "$SERVER_PRIVATE_KEY" > ~/.ssh/id_rsa
           sed -i 's/\r$//' ~/.ssh/id_rsa
           chmod 600 ~/.ssh/id_rsa
+
+          if ! grep -q "BEGIN .*PRIVATE KEY" ~/.ssh/id_rsa; then
+            echo "::error::SERVER_PRIVATE_KEY 格式错误，需包含 BEGIN/END 私钥头尾"
+            exit 1
+          fi
+
+          if ! ssh-keygen -y -f ~/.ssh/id_rsa >/dev/null 2>&1; then
+            echo "::error::SERVER_PRIVATE_KEY 无效，请重新生成并配置到 GitHub Secrets"
+            exit 1
+          fi
+
+          echo "公钥指纹（请确认已写入服务器 authorized_keys）："
+          ssh-keygen -lf ~/.ssh/id_rsa
+
           ssh-keyscan -p "$SERVER_PORT" -H "$SERVER_HOST" >> ~/.ssh/known_hosts 2>/dev/null || true
+
+          echo "测试 SSH 连接 ${SERVER_USER}@${SERVER_HOST}:${SERVER_PORT} ..."
+          if ! ssh -i ~/.ssh/id_rsa -p "$SERVER_PORT" -o BatchMode=yes -o StrictHostKeyChecking=no \
+            "$SERVER_USER@$SERVER_HOST" "echo connected"; then
+            echo "::error::SSH 认证失败。请检查：1) 公钥是否写入服务器 ~/.ssh/authorized_keys  2) SERVER_USER 是否正确  3) 私钥是否与公钥配对"
+            exit 1
+          fi
 
           ssh -i ~/.ssh/id_rsa -p "$SERVER_PORT" -o StrictHostKeyChecking=no \
             "$SERVER_USER@$SERVER_HOST" "mkdir -p '$DEPLOY_PATH/release'"
