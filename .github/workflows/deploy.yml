@@ -51,19 +51,33 @@ jobs:
           cp deploy/deploy.sh deploy/ecosystem.config.cjs deploy-output/deploy/
 
       - name: Deploy to server
-        uses: appleboy/scp-action@v0.1.7
-        with:
-          host: ${{ secrets.SERVER_HOST }}
-          username: ${{ secrets.SERVER_USER }}
-          key: ${{ secrets.SERVER_PRIVATE_KEY }}
-          source: deploy-output/frontend,deploy-output/backend,deploy-output/deploy
-          target: ${{ secrets.DEPLOY_PATH }}/release
-          strip_components: 1
+        env:
+          SERVER_HOST: ${{ secrets.SERVER_HOST }}
+          SERVER_USER: ${{ secrets.SERVER_USER }}
+          SERVER_PORT: ${{ secrets.SERVER_PORT || '22' }}
+          SERVER_PRIVATE_KEY: ${{ secrets.SERVER_PRIVATE_KEY }}
+          DEPLOY_PATH: ${{ secrets.DEPLOY_PATH }}
+        run: |
+          set -euo pipefail
+          for var in SERVER_HOST SERVER_USER SERVER_PRIVATE_KEY DEPLOY_PATH; do
+            if [ -z "${!var}" ]; then
+              echo "缺少 Secret: $var"
+              exit 1
+            fi
+          done
 
-      - name: Run deploy script
-        uses: appleboy/ssh-action@v1.2.0
-        with:
-          host: ${{ secrets.SERVER_HOST }}
-          username: ${{ secrets.SERVER_USER }}
-          key: ${{ secrets.SERVER_PRIVATE_KEY }}
-          script: bash ${{ secrets.DEPLOY_PATH }}/release/deploy/deploy.sh
+          install -m 700 -d ~/.ssh
+          printf '%s\n' "$SERVER_PRIVATE_KEY" > ~/.ssh/id_rsa
+          sed -i 's/\r$//' ~/.ssh/id_rsa
+          chmod 600 ~/.ssh/id_rsa
+          ssh-keyscan -p "$SERVER_PORT" -H "$SERVER_HOST" >> ~/.ssh/known_hosts 2>/dev/null || true
+
+          ssh -i ~/.ssh/id_rsa -p "$SERVER_PORT" -o StrictHostKeyChecking=no \
+            "$SERVER_USER@$SERVER_HOST" "mkdir -p '$DEPLOY_PATH/release'"
+
+          scp -i ~/.ssh/id_rsa -P "$SERVER_PORT" -o StrictHostKeyChecking=no -r \
+            deploy-output/frontend deploy-output/backend deploy-output/deploy \
+            "$SERVER_USER@$SERVER_HOST:$DEPLOY_PATH/release/"
+
+          ssh -i ~/.ssh/id_rsa -p "$SERVER_PORT" -o StrictHostKeyChecking=no \
+            "$SERVER_USER@$SERVER_HOST" "bash '$DEPLOY_PATH/release/deploy/deploy.sh'"
