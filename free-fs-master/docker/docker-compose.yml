@@ -1,0 +1,55 @@
+version: '3.8'
+
+services:
+  # MySQL 数据库
+  free-fs-mysql:
+    image: mysql:8.0
+    container_name: free-fs-mysql
+    restart: always
+    environment:
+      MYSQL_ROOT_PASSWORD: root
+      MYSQL_DATABASE: free-fs
+      TZ: Asia/Shanghai
+    ports:
+      - "3306:3306"
+    volumes:
+      # 数据持久化，防止容器删了数据库就没了
+      - ./docker/mysql/data:/var/lib/mysql
+      # 关键：自动执行初始化 SQL（根据你的截图路径映射）
+      - ./_sql/mysql/free-fs.sql:/docker-entrypoint-initdb.d/free-fs.sql
+
+  # Redis 缓存
+  free-fs-redis:
+    image: redis:7.0
+    container_name: free-fs-redis
+    restart: always
+    command: redis-server --requirepass 123456
+    ports:
+      - "6379:6379"
+
+  # free-fs 服务
+  free-fs-server:
+    build:
+      context: .
+      dockerfile: docker/Dockerfile
+    container_name: free-fs-server
+    restart: always
+    depends_on:
+      - free-fs-mysql
+      - free-fs-redis
+    ports:
+      - "8080:8080"
+    environment:
+      - SPRING_PROFILES_ACTIVE=docker
+      # 直接通过服务名连接，内部网络互通
+      - SPRING_DATASOURCE_URL=jdbc:mysql://free-fs-mysql:3306/free-fs?useUnicode=true&characterEncoding=UTF-8&serverTimezone=Asia/Shanghai
+      - SPRING_DATA_REDIS_HOST=free-fs-redis
+    volumes:
+      - ./logs:/logs
+      - ./tmp:/tmp
+      # 映射你的 D 盘上传目录
+      - D:/insentek/upload:/data/upload
+
+networks:
+  default:
+    name: free-fs-net

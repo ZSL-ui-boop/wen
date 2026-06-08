@@ -1,0 +1,43 @@
+{
+  "welcome": {
+    "title": "欢迎回来",
+    "subtitle": "从分类快速进入，或在下方继续最近文件",
+    "bigScreen": "查看数据大屏"
+  },
+  "category": {
+    "document": "文档",
+    "image": "图片",
+    "video": "视频",
+    "audio": "音频",
+    "other": "其他"
+  },
+  "storageCard": {
+    "title": "存储概览",
+    "usedLabel": "已使用空间",
+    "manage": "管理存储空间"
+  },
+  "recentFiles": {
+    "title": "最近文件",
+    "manageLink": "文件管理",
+    "colName": "名称",
+    "colModified": "修改时间",
+    "colSize": "大小",
+    "empty": "暂无最近文件",
+    "loadFailed": "加载失败",
+    "retry": "重试"
+  },
+  "chart": {
+    "title": "每日上传量",
+    "seriesLabel": "上传量 ({{unit}})",
+    "descDesktop": "按上传日期汇总当日文件大小（{{unit}}），非累计占用空间",
+    "descMobile": "每日上传量",
+    "range90d": "近 3 个月",
+    "range30d": "近 30 天",
+    "range7d": "近 7 天",
+    "unitAria": "数据单位",
+    "timeRangeAria": "选择时间范围",
+    "loadFailed": "加载失败，请稍后重试",
+    "noData": "暂无数据",
+    "areaName": "上传量"
+  }
+}

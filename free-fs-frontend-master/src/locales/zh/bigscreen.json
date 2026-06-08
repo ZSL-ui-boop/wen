@@ -1,0 +1,23 @@
+{
+  "title": "文件数据大屏",
+  "subtitle": "工作空间文件统计 · 存储趋势 · 当前存储平台",
+  "metricsSection": "核心指标",
+  "trendSection": "存储趋势与概览",
+  "exit": "退出大屏",
+  "refresh": "刷新",
+  "updatedAt": "更新于 {{time}}",
+  "metrics": {
+    "usedStorage": "已用存储",
+    "files": "文件数",
+    "folders": "文件夹",
+    "shares": "分享数",
+    "recycle": "回收站",
+    "uploadToday": "今日上传文件数"
+  },
+  "chartTitle": "近 7 日上传趋势",
+  "chartHint": "柱：每日上传文件数；线：当日上传体积（MB）",
+  "chartNoData": "近 7 日无新上传，历史文件不在此统计范围内",
+  "chartCount": "上传个数",
+  "chartSize": "上传体积 (MB)",
+  "loadFailed": "大屏数据加载失败"
+}

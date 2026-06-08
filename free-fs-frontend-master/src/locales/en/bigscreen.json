@@ -1,0 +1,23 @@
+{
+  "title": "File analytics screen",
+  "subtitle": "Workspace file stats · storage trend · current platform",
+  "metricsSection": "Key metrics",
+  "trendSection": "Trend & overview",
+  "exit": "Exit screen",
+  "refresh": "Refresh",
+  "updatedAt": "Updated at {{time}}",
+  "metrics": {
+    "usedStorage": "Storage used",
+    "files": "Files",
+    "folders": "Folders",
+    "shares": "Shares",
+    "recycle": "Recycle bin",
+    "uploadToday": "Files uploaded today"
+  },
+  "chartTitle": "Upload trend (7 days)",
+  "chartHint": "Bars: files uploaded per day; line: volume (MB)",
+  "chartNoData": "No uploads in the last 7 days",
+  "chartCount": "File count",
+  "chartSize": "Volume (MB)",
+  "loadFailed": "Failed to load dashboard data"
+}

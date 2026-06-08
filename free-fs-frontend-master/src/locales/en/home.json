@@ -1,0 +1,43 @@
+{
+  "welcome": {
+    "title": "Welcome back",
+    "subtitle": "Browse by category below, or pick up where you left off",
+    "bigScreen": "Open data screen"
+  },
+  "category": {
+    "document": "Documents",
+    "image": "Images",
+    "video": "Video",
+    "audio": "Audio",
+    "other": "Other"
+  },
+  "storageCard": {
+    "title": "Storage",
+    "usedLabel": "Space used",
+    "manage": "Manage storage"
+  },
+  "recentFiles": {
+    "title": "Recent files",
+    "manageLink": "Files",
+    "colName": "Name",
+    "colModified": "Modified",
+    "colSize": "Size",
+    "empty": "No recent files",
+    "loadFailed": "Failed to load",
+    "retry": "Retry"
+  },
+  "chart": {
+    "title": "Daily upload volume",
+    "seriesLabel": "Uploaded ({{unit}})",
+    "descDesktop": "Sum of file sizes uploaded each day ({{unit}}), not total space used",
+    "descMobile": "Daily uploads",
+    "range90d": "Last 3 months",
+    "range30d": "Last 30 days",
+    "range7d": "Last 7 days",
+    "unitAria": "Unit",
+    "timeRangeAria": "Time range",
+    "loadFailed": "Failed to load. Try again later.",
+    "noData": "No data",
+    "areaName": "Upload volume"
+  }
+}

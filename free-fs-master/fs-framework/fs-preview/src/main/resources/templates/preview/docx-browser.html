@@ -1,0 +1,174 @@
+<!DOCTYPE html>
+<html xmlns:th="http://www.thymeleaf.org">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title th:text="${fileName}">Word 预览</title>
+    <style>
+        :root {
+            --color-bg-1: #1a1a1a;
+            --color-bg-2: #000000;
+            --color-border: rgba(255, 255, 255, 0.1);
+            --color-text-1: #ffffff;
+        }
+        * { margin: 0; padding: 0; box-sizing: border-box; }
+        body {
+            font-family: Inter, -apple-system, BlinkMacSystemFont, "PingFang SC", "Microsoft YaHei", sans-serif;
+            background: var(--color-bg-2);
+            height: 100vh;
+            overflow: hidden;
+            display: flex;
+            flex-direction: column;
+            color: var(--color-text-1);
+        }
+        .header {
+            height: 48px;
+            background: var(--color-bg-1);
+            border-bottom: 1px solid var(--color-border);
+            display: flex;
+            align-items: center;
+            justify-content: space-between;
+            padding: 0 20px;
+            flex-shrink: 0;
+        }
+        .file-name { font-size: 14px; opacity: 0.9; }
+        .close-btn {
+            cursor: pointer;
+            padding: 8px;
+            border-radius: 4px;
+        }
+        .close-btn:hover { background: rgba(255,255,255,0.1); }
+        #docx-scroll {
+            flex: 1;
+            overflow: auto;
+            background: #525659;
+            padding: 16px;
+        }
+        #docx-body-wrap {
+            max-width: 900px;
+            margin: 0 auto;
+            background: #fff;
+            min-height: 200px;
+            box-shadow: 0 2px 12px rgba(0,0,0,0.35);
+        }
+        #doc-legacy-hint {
+            display: none;
+            padding: 48px 24px;
+            text-align: center;
+            color: #e5e5e5;
+            line-height: 1.7;
+        }
+        .loading-container {
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            justify-content: center;
+            padding: 48px;
+            color: #fff;
+        }
+        .spinner {
+            width: 32px;
+            height: 32px;
+            border: 3px solid rgba(255, 255, 255, 0.2);
+            border-top-color: #fff;
+            border-radius: 50%;
+            animation: spin 1s linear infinite;
+            margin-bottom: 16px;
+        }
+        @keyframes spin { to { transform: rotate(360deg); } }
+    </style>
+    <script th:src="@{/lib/docx-preview/jszip.min.js}"></script>
+    <script th:src="@{/lib/docx-preview/docx-preview.js}"></script>
+</head>
+<body>
+<div class="header">
+    <span class="file-name" th:text="${fileName}">文件名</span>
+    <div class="close-btn" onclick="window.close()" title="关闭">
+        <svg width="24" height="24" viewBox="0 0 48 48" fill="none">
+            <path d="M14 14L34 34" stroke="white" stroke-width="4" stroke-linecap="round"/>
+            <path d="M14 34L34 14" stroke="white" stroke-width="4" stroke-linecap="round"/>
+        </svg>
+    </div>
+</div>
+<div id="docx-scroll">
+    <div id="doc-legacy-hint">
+        <p>当前为经典 Word 二进制格式（.doc），浏览器无法直接排版预览。</p>
+        <p style="margin-top:12px;opacity:.85">请下载后使用 Word 打开，或在服务器启用 LibreOffice 预览（<code style="color:#8ab4ff">fs.preview.office.enabled=true</code>）。</p>
+    </div>
+    <div id="loading" class="loading-container">
+        <div class="spinner"></div>
+        <div>正在加载文档...</div>
+    </div>
+    <div id="docx-body-wrap" style="display:none">
+        <div id="docx-style-outlet"></div>
+        <div id="docx-body"></div>
+    </div>
+</div>
+
+<script th:inline="javascript">
+    const streamUrl = /*[[${streamUrl}]]*/ '';
+    const fileSize = /*[[${fileSize}]]*/ 0;
+    const extension = (/*[[${extension}]]*/ '' || '').toString().replace(/^\./, '').toLowerCase();
+    const MAX_BLOB_SIZE = 50 * 1024 * 1024;
+
+    const loadingEl = document.getElementById('loading');
+    const legacyHint = document.getElementById('doc-legacy-hint');
+    const bodyWrap = document.getElementById('docx-body-wrap');
+    const bodyEl = document.getElementById('docx-body');
+    const styleOutlet = document.getElementById('docx-style-outlet');
+
+    function showError(msg) {
+        loadingEl.style.display = 'flex';
+        loadingEl.innerHTML = '<div style="color:#ffb4b4;text-align:center;padding:0 16px">' + msg + '</div>';
+    }
+
+    async function run() {
+        if (!streamUrl) {
+            showError('无效的预览地址');
+            return;
+        }
+        if (extension === 'doc') {
+            loadingEl.style.display = 'none';
+            legacyHint.style.display = 'block';
+            return;
+        }
+        if (typeof JSZip === 'undefined' || !window.docx || typeof window.docx.renderAsync !== 'function') {
+            showError('预览脚本未正确加载，请刷新重试');
+            return;
+        }
+        if (fileSize > MAX_BLOB_SIZE) {
+            showError('文件超过 50MB，为避免浏览器卡顿请下载查看');
+            return;
+        }
+        try {
+            const response = await fetch(streamUrl, {
+                method: 'GET',
+                headers: {
+                    'Accept': 'application/vnd.openxmlformats-officedocument.wordprocessingml.document, application/octet-stream',
+                    'X-Request-Type': 'preview'
+                },
+                credentials: 'same-origin'
+            });
+            if (!response.ok) {
+                throw new Error('HTTP ' + response.status);
+            }
+            const buf = await response.arrayBuffer();
+            loadingEl.style.display = 'none';
+            bodyWrap.style.display = 'block';
+            bodyEl.innerHTML = '';
+            styleOutlet.innerHTML = '';
+            await window.docx.renderAsync(buf, bodyEl, styleOutlet, {
+                className: 'docx',
+                inWrapper: true,
+                breakPages: true
+            });
+        } catch (e) {
+            console.error(e);
+            showError('文档预览失败：' + (e && e.message ? e.message : '未知错误'));
+        }
+    }
+
+    run();
+</script>
+</body>
+</html>

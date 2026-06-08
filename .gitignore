@@ -1,0 +1,17 @@
+# Dependencies & build output
+**/node_modules/
+**/target/
+**/dist/
+
+# Local env & secrets
+**/.env.local
+**/application-local.yml
+
+# IDE
+.idea/
+*.iml
+.vscode/
+
+# OS
+.DS_Store
+Thumbs.db

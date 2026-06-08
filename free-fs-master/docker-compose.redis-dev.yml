@@ -1,0 +1,10 @@
+# 本地开发：无密码 Redis，与 application-dev.yml（dev）默认一致
+# 用法（在 free-fs-master 目录下）:
+#   docker compose -f docker-compose.redis-dev.yml up -d
+#   docker compose -f docker-compose.redis-dev.yml down
+services:
+  free-fs-redis-dev:
+    image: redis:7-alpine
+    container_name: free-fs-redis-dev
+    ports:
+      - "6379:6379"
