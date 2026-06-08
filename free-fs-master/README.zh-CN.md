@@ -6,7 +6,7 @@
 
 ### 现代化文件管理网盘系统
 
-一个基于 Spring Boot 4.x 的企业级文件管理网盘系统后端，专注于提供高性能、高可靠的文件存储和管理服务。
+一个基于 Spring Boot 4.x1 的企业级文件管理网盘系统后端，专注于提供高性能、高可靠的文件存储和管理服务。
 
  <img src="https://img.shields.io/badge/Spring%20Boot-4.0.3-blue.svg" alt="Downloads">
  <img src="https://img.shields.io/badge/React-19-blue.svg" alt="Downloads">
