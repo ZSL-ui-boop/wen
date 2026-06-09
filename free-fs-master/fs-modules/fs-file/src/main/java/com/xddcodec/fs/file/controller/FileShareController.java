@@ -23,6 +23,13 @@ import java.net.URLEncoder;
 import java.nio.charset.StandardCharsets;
 import java.util.List;
 
+/**
+ * 文件分享控制器
+ * <p>提供分享创建/取消、提取码校验、外链浏览与下载等接口。
+ * 公开分享接口（info/items/path/download）无需登录，由 {@link com.xddcodec.fs.interceptor.WorkspaceInterceptor} 白名单放行。</p>
+ *
+ * @author xddcode
+ */
 @Validated
 @Slf4j
 @RestController

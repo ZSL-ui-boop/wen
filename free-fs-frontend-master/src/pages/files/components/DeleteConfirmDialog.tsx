@@ -1,3 +1,7 @@
+/**
+ * 删除确认对话框
+ * 根据选中文件数量展示不同的确认文案
+ */
 import { useMemo } from 'react'
 import { useTranslation } from 'react-i18next'
 import type { FileItem } from '@/types/file'

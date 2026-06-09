@@ -1,3 +1,7 @@
+/**
+ * 外观偏好表单
+ * 主题模式、界面语言等展示偏好设置
+ */
 import React from 'react'
 import { z } from 'zod'
 import { useForm } from 'react-hook-form'
@@ -32,6 +36,7 @@ type AppearanceFormValues = {
   layout: 'default' | 'compact'
 }
 
+/** 从 localStorage 读取侧边栏布局偏好 */
 function getInitialLayout(): 'default' | 'compact' {
   if (typeof window === 'undefined') return 'default'
   return (
@@ -41,6 +46,7 @@ function getInitialLayout(): 'default' | 'compact' {
   ) as 'default' | 'compact'
 }
 
+/** 外观偏好表单：语言、主题与侧边栏布局（即时生效） */
 export function AppearanceForm() {
   const { t } = useTranslation('settings')
   const { i18n } = useTranslation()
@@ -103,17 +109,20 @@ export function AppearanceForm() {
     return () => window.removeEventListener('storage', handleStorageChange)
   }, [form])
 
+  /** 切换主题并提示 */
   const handleThemeChange = (theme: 'light' | 'dark') => {
     setTheme(theme, false)
     toast.success(t('appearance.themeUpdated'))
   }
 
+  /** 切换侧边栏展开/紧凑布局并持久化 */
   const handleLayoutChange = (layout: 'default' | 'compact') => {
     localStorage.setItem(LAYOUT_STORAGE_KEY, layout)
     setOpen(layout === 'default')
     toast.success(t('appearance.layoutUpdated'))
   }
 
+  /** 切换界面语言并提示（需在 changeLanguage 完成后 toast） */
   const handleLanguageChange = async (lang: AppLang) => {
     await i18n.changeLanguage(lang)
     // changeLanguage 完成后再用 i18n.t，否则 toast 仍是切换前的语言

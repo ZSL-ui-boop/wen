@@ -1,3 +1,7 @@
+/**
+ * 文件管理页组件统一导出
+ * 工具栏、列表/网格视图、各类操作弹窗等
+ */
 export { Toolbar } from './Toolbar'
 export { FileBreadcrumb } from './FileBreadcrumb'
 export { FileGridView } from './FileGridView'

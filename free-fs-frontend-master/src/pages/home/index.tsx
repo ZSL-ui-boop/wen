@@ -1,3 +1,7 @@
+/**
+ * 工作空间首页
+ * 展示欢迎区、文件分类快捷入口与最近访问文件列表
+ */
 import * as React from 'react'
 import { BarChart3 } from 'lucide-react'
 import { useTranslation } from 'react-i18next'
@@ -9,6 +13,7 @@ import {
   CategoryShortcutLink,
 } from './components/section-cards'
 
+/** 工作空间仪表盘首页 */
 export default function HomePage() {
   const { t } = useTranslation('home')
   const { slug = '' } = useParams<{ slug: string }>()

@@ -29,6 +29,10 @@ import java.util.UUID;
 
 /**
  * 压缩包内文件预览服务
+ * <p>从压缩包字节流中提取目标文件，缓存至 Redis 后签发独立流 token，
+ * 供 {@link com.xddcodec.fs.file.controller.FileStreamController} 按预览策略渲染。</p>
+ *
+ * @author xddcode
  */
 @Slf4j
 @Service

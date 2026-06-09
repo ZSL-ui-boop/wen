@@ -1,3 +1,7 @@
+/**
+ * @file 顶栏
+ * @description 固定于内容区顶部，包含侧栏触发器、全局搜索与主题切换。
+ */
 import { useEffect, useState } from 'react'
 import { useTranslation } from 'react-i18next'
 import { cn } from '@/lib/utils'
@@ -18,6 +22,9 @@ type HeaderProps = React.HTMLAttributes<HTMLElement> & {
   ref?: React.Ref<HTMLElement>
 }
 
+/**
+ * 页面顶栏。滚动超过阈值时显示阴影与毛玻璃背景。
+ */
 export function Header({ className, fixed, children, ...props }: HeaderProps) {
   const { t } = useTranslation('layout')
   const [offset, setOffset] = useState(0)
@@ -34,10 +41,10 @@ export function Header({ className, fixed, children, ...props }: HeaderProps) {
       setOffset(document.body.scrollTop || document.documentElement.scrollTop)
     }
 
-    // Add scroll listener to the body
+    // 监听页面滚动，用于顶栏阴影/背景切换
     document.addEventListener('scroll', onScroll, { passive: true })
 
-    // Clean up the event listener on unmount
+    // 卸载时移除监听
     return () => document.removeEventListener('scroll', onScroll)
   }, [])
 

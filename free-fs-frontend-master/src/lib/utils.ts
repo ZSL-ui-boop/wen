@@ -1,25 +1,25 @@
+/**
+ * 通用工具函数
+ * 提供 Tailwind 类名合并、延时 Promise 与分页页码生成
+ */
 import { type ClassValue, clsx } from 'clsx'
 import { twMerge } from 'tailwind-merge'
 
+/** 合并 Tailwind 类名，自动去重与覆盖冲突 */
 export function cn(...inputs: ClassValue[]) {
   return twMerge(clsx(inputs))
 }
 
+/** 返回在指定毫秒后 resolve 的 Promise，默认 1 秒 */
 export function sleep(ms: number = 1000) {
   return new Promise((resolve) => setTimeout(resolve, ms))
 }
 
 /**
- * Generates page numbers for pagination with ellipsis
- * @param currentPage - Current page number (1-based)
- * @param totalPages - Total number of pages
- * @returns Array of page numbers and ellipsis strings
- *
- * Examples:
- * - Small dataset (≤5 pages): [1, 2, 3, 4, 5]
- * - Near beginning: [1, 2, 3, 4, '...', 10]
- * - In middle: [1, '...', 4, 5, 6, '...', 10]
- * - Near end: [1, '...', 7, 8, 9, 10]
+ * 生成分页页码数组（含省略号）
+ * @param currentPage - 当前页码（从 1 开始）
+ * @param totalPages - 总页数
+ * @returns 页码与 '...' 字符串组成的数组
  */
 export function getPageNumbers(currentPage: number, totalPages: number) {
   const maxVisiblePages = 5 // Maximum number of page buttons to show

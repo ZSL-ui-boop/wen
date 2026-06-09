@@ -1,3 +1,7 @@
+/**
+ * @file 通用批量选择工具栏
+ * @description 选中项大于 0 时在页面底部 Portal 渲染的操作条，含键盘导航与读屏支持。
+ */
 import { useEffect, useId, useRef, useState } from 'react'
 import { createPortal } from 'react-dom'
 import { useTranslation } from 'react-i18next'
@@ -24,6 +28,9 @@ export type BulkSelectionBarProps = {
   getAnnouncement?: (count: number) => string
 }
 
+/**
+ * 底部固定批量选择工具栏，通过 Portal 挂载到 document.body。
+ */
 export function BulkSelectionBar({
   selectedCount,
   onClear,
@@ -40,6 +47,7 @@ export function BulkSelectionBar({
   const [announcement, setAnnouncement] = useState('')
   const descId = useId()
 
+  // 客户端挂载后再 Portal，避免 SSR 水合不一致
   useEffect(() => {
     setMounted(true)
   }, [])

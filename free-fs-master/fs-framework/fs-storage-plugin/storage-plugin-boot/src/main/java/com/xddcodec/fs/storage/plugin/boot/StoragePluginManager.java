@@ -13,6 +13,13 @@ import java.util.List;
 import java.util.Set;
 import java.util.function.Supplier;
 
+/**
+ * 存储插件实例管理器
+ * <p>统一对外提供存储操作实例的获取、创建与失效能力。
+ * Local 平台为全局单例；用户自定义配置按 cacheKey 缓存，配置变更时调用 invalidate 刷新。</p>
+ *
+ * @author xddcode
+ */
 @Slf4j
 @Component
 @RequiredArgsConstructor

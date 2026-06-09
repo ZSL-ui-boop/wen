@@ -1,3 +1,7 @@
+/**
+ * 新增存储配置弹窗
+ * 选择存储平台并按配置方案动态渲染表单项
+ */
 import { useState, useEffect } from 'react'
 import { useTranslation } from 'react-i18next'
 import { useQuery } from '@tanstack/react-query'

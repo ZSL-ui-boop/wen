@@ -1,3 +1,7 @@
+/**
+ * @file 顶栏搜索入口
+ * @description 点击打开全局命令菜单，展示 ⌘K 快捷键提示。
+ */
 import { useTranslation } from 'react-i18next'
 import { SearchIcon } from 'lucide-react'
 import { cn } from '@/lib/utils'
@@ -10,6 +14,7 @@ type SearchProps = {
   placeholder?: string
 }
 
+/** 顶栏搜索按钮：触发全局 CommandMenu */
 export function Search({
   className = '',
   placeholder,

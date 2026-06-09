@@ -1,3 +1,7 @@
+/**
+ * 文件移动弹窗
+ * 树形选择目标文件夹，支持单文件或批量移动
+ */
 import { useState, useEffect, useRef } from 'react'
 import { useTranslation } from 'react-i18next'
 import type { FileItem } from '@/types/file'

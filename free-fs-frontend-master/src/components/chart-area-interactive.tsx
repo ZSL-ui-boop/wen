@@ -1,3 +1,7 @@
+/**
+ * @file 存储用量面积图
+ * @description 首页/大屏可交互的存储趋势图表，支持时间范围与单位切换。
+ */
 import * as React from 'react'
 import { useTranslation } from 'react-i18next'
 import { useQuery } from '@tanstack/react-query'
@@ -43,18 +47,21 @@ import {
   bigscreenPanelClass,
 } from '@/pages/big-screen/bigscreen-theme'
 
+/** 存储单位显示标签 */
 const UNIT_LABELS: Record<HomeUsedBytesUnit, string> = {
   1: 'KB',
   2: 'MB',
   3: 'GB',
 }
 
+/** 各存储单位下 Y 轴宽度（避免刻度被截断） */
 const Y_AXIS_WIDTH: Record<HomeUsedBytesUnit, number> = {
   1: 64,
   2: 56,
   3: 52,
 }
 
+/** 将 UI 时间范围字符串映射为 API dateType */
 function timeRangeToDateType(range: string): HomeUsedBytesDateType {
   if (range === '30d') return 1
   if (range === '7d') return 2
@@ -70,6 +77,9 @@ type ChartAreaInteractiveProps = {
   variant?: 'default' | 'bigscreen'
 }
 
+/**
+ * 可交互存储趋势面积图，单位与父级状态联动。
+ */
 export function ChartAreaInteractive({
   className,
   unit,
@@ -82,6 +92,7 @@ export function ChartAreaInteractive({
   const [timeRange, setTimeRange] = React.useState('7d')
   const dateLocale = i18n.language?.startsWith('zh') ? 'zh-CN' : 'en-US'
 
+  // 移动端默认缩短为 7 日范围
   React.useEffect(() => {
     if (isMobile) {
       setTimeRange('7d')
@@ -127,6 +138,7 @@ export function ChartAreaInteractive({
     [chartData]
   )
 
+  // 数值过小时加粗描边，避免面积图几乎不可见
   const areaStrokeWidth =
     unit >= 2 && maxUsed > 0 && maxUsed < 0.05 ? 2.5 : 1.5
 

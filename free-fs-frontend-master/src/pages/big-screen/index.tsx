@@ -1,3 +1,7 @@
+/**
+ * 数据大屏页
+ * 全屏展示存储用量、文件统计与增长趋势，30 秒自动刷新
+ */
 import * as React from 'react'
 import { useQuery, useQueryClient } from '@tanstack/react-query'
 import { useTranslation } from 'react-i18next'
@@ -12,6 +16,7 @@ import { ChartStorageGrowth } from '@/pages/home/components/chart-storage-growth
 import { StorageOverviewCard } from '@/pages/home/components/storage-usage-card'
 import { cn } from '@/lib/utils'
 
+/** 大屏指标卡片：标签 + 数值展示 */
 function MetricCard({
   label,
   value,
@@ -39,6 +44,7 @@ function MetricCard({
   )
 }
 
+/** 数据可视化大屏主页面 */
 export default function BigScreenPage() {
   const { t } = useTranslation('bigscreen')
   const { slug = '' } = useParams<{ slug: string }>()
@@ -49,6 +55,7 @@ export default function BigScreenPage() {
   const [ready, setReady] = React.useState(false)
   const [storageUnit, setStorageUnit] = React.useState<HomeUsedBytesUnit>(2)
 
+  // 进入大屏前确保对应工作空间已激活（加载角色权限）
   React.useEffect(() => {
     if (isLoading || !isAuthenticated || !slug) return
     const workspace = findBySlug(slug)
@@ -201,6 +208,7 @@ export default function BigScreenPage() {
   )
 }
 
+/** 编程式 replace 导航（slug 无效时回退首页） */
 function NavigateReplace({ to }: { to: string }) {
   const navigate = useNavigate()
   React.useEffect(() => {

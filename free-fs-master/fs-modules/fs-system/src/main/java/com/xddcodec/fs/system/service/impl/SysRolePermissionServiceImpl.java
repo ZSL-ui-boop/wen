@@ -18,9 +18,10 @@ import static com.xddcodec.fs.system.domain.table.SysRolePermissionTableDef.SYS_
 
 /**
  * 角色权限关联服务实现类
+ * <p>维护角色与权限码的多对多映射，查询结果缓存至 {@code rolePermissions}，
+ * 供 {@link com.xddcodec.fs.system.auth.StpInterfaceImpl} 在 Sa-Token 鉴权时加载。</p>
  *
- * @Author: xddcode
- * @Date: 2026/3/30 10:11
+ * @author xddcode
  */
 @Service
 public class SysRolePermissionServiceImpl extends ServiceImpl<SysRolePermissionMapper, SysRolePermission> implements SysRolePermissionService {

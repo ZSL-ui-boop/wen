@@ -14,10 +14,17 @@ import org.springframework.web.servlet.config.annotation.ResourceHandlerRegistry
 import org.springframework.web.servlet.config.annotation.WebMvcConfigurer;
 
 /**
- * Web 配置
+ * Web MVC 配置
+ * <p>注册拦截器链（按 order 升序执行）：
+ * <ol>
+ *   <li>工作空间上下文校验</li>
+ *   <li>Sa-Token 登录校验</li>
+ *   <li>存储平台 configId 上下文注入</li>
+ *   <li>预览 token 防盗链校验</li>
+ * </ol>
+ * 同时映射本地存储静态资源访问路径。</p>
  *
- * @Author: xddcode
- * @Date: 2024/11/18 13:53
+ * @author xddcode
  */
 @Configuration
 public class WebMvcConfig implements WebMvcConfigurer {

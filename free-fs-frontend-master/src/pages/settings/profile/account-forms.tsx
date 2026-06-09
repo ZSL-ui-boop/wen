@@ -1,3 +1,7 @@
+/**
+ * 账号安全表单
+ * 修改邮箱与修改密码的独立表单组件
+ */
 import { useState, useEffect, useMemo } from 'react'
 import { z } from 'zod'
 import { useForm } from 'react-hook-form'
@@ -36,9 +40,12 @@ type ChangeEmailValues = {
   code: string
 }
 
+/** 弹窗内密码表单 id，供 DialogFooter 提交按钮关联 */
 const PASSWORD_FORM_ID = 'settings-password-form'
+/** 弹窗内邮箱表单 id */
 const EMAIL_FORM_ID = 'settings-email-form'
 
+/** 修改/设置密码表单（支持首次设置与修改两种模式） */
 export function PasswordChangeForm({
   onSuccess,
   onCancel,
@@ -105,6 +112,7 @@ export function PasswordChangeForm({
   const pwdValues = passwordForm.watch()
   const passwordCanSubmit = activePwdSchema.safeParse(pwdValues).success
 
+  /** 提交密码修改或首次设置 */
   async function onPasswordSubmit(
     data: ChangePasswordValues | SetPasswordValues
   ) {
@@ -278,6 +286,7 @@ export function PasswordChangeForm({
   )
 }
 
+/** 修改邮箱表单（需验证码，成功后强制重新登录） */
 export function EmailChangeForm({
   onSuccess,
   onCancel,
@@ -319,6 +328,7 @@ export function EmailChangeForm({
     }
   }, [countdown])
 
+  /** 向新邮箱发送验证码，成功后启动 60s 倒计时 */
   async function handleSendCode() {
     const email = emailForm.getValues('email')
     if (!email || !z.string().email().safeParse(email).success) {
@@ -338,6 +348,7 @@ export function EmailChangeForm({
     }
   }
 
+  /** 提交邮箱变更，成功后延迟退出登录 */
   async function onEmailSubmit(data: ChangeEmailValues) {
     if (!user) return
 

@@ -10,6 +10,12 @@ import jakarta.validation.Valid;
 import lombok.RequiredArgsConstructor;
 import org.springframework.web.bind.annotation.*;
 
+/**
+ * 认证控制器
+ * <p>提供登录、登出及邮箱验证码发送接口；登录成功后由 Sa-Token 签发会话令牌。</p>
+ *
+ * @author xddcode
+ */
 @RestController
 @RequestMapping("/apis/auth")
 @RequiredArgsConstructor

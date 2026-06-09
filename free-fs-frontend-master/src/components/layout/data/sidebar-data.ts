@@ -1,3 +1,7 @@
+/**
+ * @file 侧边栏导航静态数据
+ * @description 定义默认用户占位、导航分组、链接、图标与权限码。
+ */
 import {
   RiArrowLeftRightFill,
   RiArrowLeftRightLine,
@@ -20,6 +24,7 @@ import {
 } from '@remixicon/react'
 import { type SidebarData } from '../types'
 
+/** 侧边栏导航配置（路径为相对 `/w/:slug` 的逻辑路径） */
 export const sidebarData: SidebarData = {
   user: {
     name: '',

@@ -1,3 +1,7 @@
+/**
+ * @file 应用侧边栏
+ * @description 渲染工作空间切换、权限过滤后的导航分组、设置入口与用户信息。
+ */
 import { Fragment } from 'react'
 import { useTranslation } from 'react-i18next'
 import { useAuth } from '@/contexts/auth-context'
@@ -21,6 +25,7 @@ import { sidebarData } from './data/sidebar-data'
 import { NavGroup } from './nav-group'
 import { NavUser } from './nav-user'
 
+/** 侧边栏底部「设置」快捷按钮，折叠时通过 tooltip 显示文案 */
 function SettingsButton() {
   const { t } = useTranslation('layout')
   const { state } = useSidebar()
@@ -45,6 +50,9 @@ function SettingsButton() {
   )
 }
 
+/**
+ * 主侧边栏：根据权限过滤导航项，空分组不渲染。
+ */
 export function AppSidebar() {
   const { t } = useTranslation('layout')
   const { user: authUser } = useAuth()

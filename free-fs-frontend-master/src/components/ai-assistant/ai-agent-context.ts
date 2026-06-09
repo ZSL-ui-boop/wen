@@ -1,9 +1,14 @@
+/**
+ * @file Agent 上下文构建
+ * @description 为 Agent 模式拉取仪表盘与首页数据，格式化为可注入模型的文本摘要。
+ */
 import { getDashboard } from '@/api/dashboard'
 
 import { getHomeInfo } from '@/api/home'
 
 
 
+/** Agent 上下文构建结果 */
 export type AgentContextResult = {
 
   text: string
@@ -14,6 +19,7 @@ export type AgentContextResult = {
 
 
 
+/** 将字节数格式化为可读存储单位 */
 function formatSize(bytes: number): string {
 
   if (bytes >= 1024 * 1024 * 1024) return `${(bytes / (1024 * 1024 * 1024)).toFixed(2)} GB`

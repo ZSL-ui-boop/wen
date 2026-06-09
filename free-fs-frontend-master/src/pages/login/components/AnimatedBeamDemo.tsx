@@ -1,7 +1,12 @@
+/**
+ * 登录页右侧装饰动画
+ * 以文件服务相关图标节点与 AnimatedBeam 连线展示产品能力
+ */
 import React, { forwardRef, useRef } from 'react'
 import { cn } from '@/lib/utils'
 import { AnimatedBeam } from '@/components/ui/animated-beam'
 
+/** 圆形图标容器，供 AnimatedBeam 定位起止点 */
 const Circle = forwardRef<
   HTMLDivElement,
   { className?: string; children?: React.ReactNode }
@@ -21,8 +26,10 @@ const Circle = forwardRef<
 
 Circle.displayName = 'Circle'
 
+/** 登录页右侧：多节点汇聚至中心服务器的连线动画 */
 export function AnimatedBeamDemo() {
   const containerRef = useRef<HTMLDivElement>(null)
+  // 各图标节点 ref，作为 AnimatedBeam 的起止锚点
   const div1Ref = useRef<HTMLDivElement>(null)
   const div2Ref = useRef<HTMLDivElement>(null)
   const div3Ref = useRef<HTMLDivElement>(null)
@@ -66,6 +73,7 @@ export function AnimatedBeamDemo() {
         </div>
       </div>
 
+      {/* 外围节点 → 中心服务器（div4）的连线动画 */}
       <AnimatedBeam
         containerRef={containerRef}
         fromRef={div1Ref}
@@ -111,6 +119,7 @@ export function AnimatedBeamDemo() {
   )
 }
 
+/** 登录页装饰用 SVG 图标集合 */
 const Icons = {
   cloud: () => (
     <svg

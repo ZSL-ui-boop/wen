@@ -1,3 +1,7 @@
+/**
+ * 设置弹窗
+ * 左侧导航 + 右侧面板，按权限过滤工作空间相关设置项
+ */
 import { useMemo } from 'react'
 import { useTranslation } from 'react-i18next'
 import type { TFunction } from 'i18next'
@@ -45,6 +49,7 @@ interface NavItemConfig {
   permission?: PermissionCodeType
 }
 
+/** 构建设置侧栏导航配置（账户 / 工作空间分组） */
 function buildNavConfig(
   t: TFunction<'settings'>
 ): { label: string; items: NavItemConfig[] }[] {
@@ -98,6 +103,7 @@ function buildNavConfig(
   ]
 }
 
+/** 按权限过滤导航项，移除空分组 */
 function toNavGroups(
   config: ReturnType<typeof buildNavConfig>,
   hasPermission: (p: PermissionCodeType) => boolean
@@ -116,6 +122,7 @@ function toNavGroups(
     .filter((g) => g.items.length > 0)
 }
 
+/** 根据当前 Tab 渲染对应设置子页面 */
 function SettingsPanel({ tab }: { tab: SettingsTab }) {
   const { hasPermission } = usePermission()
 
@@ -149,6 +156,7 @@ function SettingsPanel({ tab }: { tab: SettingsTab }) {
   }
 }
 
+/** 全局设置弹窗：侧栏导航 + 内容区 */
 export function SettingsDialog() {
   const { t } = useTranslation('settings')
   const { open, setOpen, tab, setTab } = useSettingsModal()

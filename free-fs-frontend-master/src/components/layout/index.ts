@@ -1,3 +1,7 @@
+/**
+ * @file 布局模块统一导出
+ * @description 导出 AppLayout、侧栏、顶栏、面包屑等布局相关组件与类型。
+ */
 // Layout components exports
 export { AppLayout } from './app-layout'
 export { AppSidebar } from './app-sidebar'

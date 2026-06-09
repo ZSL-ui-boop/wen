@@ -1,3 +1,9 @@
+/**
+ * 文件操作 Hook
+ *
+ * 封装新建文件夹、重命名、移动、分享、删除、下载、
+ * 收藏/取消收藏、预览、详情等操作及对应弹窗状态。
+ */
 import { useState, useCallback } from 'react'
 import { useTranslation } from 'react-i18next'
 import type { FileItem } from '@/types/file'
@@ -13,6 +19,12 @@ import {
 import { openFilePreviewWithToken } from '@/utils/preview'
 import { getCurrentWorkspaceId } from '@/store/workspace'
 
+/**
+ * @param refreshCallback 操作成功后刷新列表
+ * @param clearSelectionCallback 操作成功后清空多选
+ * @param onCreateFolderSuccess 创建文件夹成功后的额外回调
+ * @param updateFileItemsCallback 乐观更新本地列表项（如收藏）
+ */
 export function useFileOperations(
   refreshCallback: () => void,
   clearSelectionCallback?: () => void,

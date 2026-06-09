@@ -1,3 +1,7 @@
+/**
+ * 传输偏好表单
+ * 上传并发、分片大小、断点续传等用户级传输配置
+ */
 import { useState, useEffect, useRef, useMemo } from 'react'
 import { useTranslation } from 'react-i18next'
 import { z } from 'zod'
@@ -33,7 +37,8 @@ import {
 } from '@/components/ui/tooltip'
 import { SettingsRow, SettingsBlock } from '../components/settings-row'
 
-// 路径格式校验
+// 路径格式校验（支持 Windows 绝对路径、UNC 与 Unix 风格）
+/** 校验下载路径是否为合法的 Windows 或 Unix 路径 */
 const validatePath = (value: string) => {
   if (!value || !value.trim()) {
     return false
@@ -56,6 +61,7 @@ const validatePath = (value: string) => {
     return false
   }
 
+  // Windows 路径额外排除非法字符
   if (isWindowsPath) {
     const illegalChars = /[<>"|?*]/
     const pathWithoutDrive = path.substring(path.indexOf(':') + 1)
@@ -67,6 +73,7 @@ const validatePath = (value: string) => {
   return true
 }
 
+/** 传输偏好表单字段类型 */
 type TransferFormValues = {
   downloadLocation: string
   isDefaultDownloadLocation: boolean
@@ -77,6 +84,7 @@ type TransferFormValues = {
   chunkSize: number
 }
 
+/** 传输偏好设置表单（下载路径、并发、分片等，变更后自动保存） */
 export function TransferForm() {
   const { t } = useTranslation('settings')
   const transferFormSchema = useMemo(
@@ -121,6 +129,7 @@ export function TransferForm() {
     loadSettings()
   }, [])
 
+  /** 从服务端拉取传输配置并 reset 表单 */
   async function loadSettings() {
     setLoading(true)
     settingsReadyRef.current = false
@@ -145,6 +154,7 @@ export function TransferForm() {
     }
   }
 
+  /** 触发表单校验通过后保存 */
   async function saveAfterValidation() {
     if (!settingsReadyRef.current) return
     const ok = await form.trigger()
@@ -152,6 +162,7 @@ export function TransferForm() {
     await saveSettings(form.getValues())
   }
 
+  /** 提交传输配置到服务端并刷新 store */
   async function saveSettings(data: TransferFormValues) {
     if (!settingsReadyRef.current) return
 
@@ -162,7 +173,7 @@ export function TransferForm() {
         isDefaultDownloadLocation: data.isDefaultDownloadLocation ? 1 : 0,
         downloadSpeedLimit: data.enableDownloadSpeedLimit
           ? data.downloadSpeedLimit || 5
-          : -1,
+          : -1, // -1 表示不限速
         concurrentUploadQuantity: data.concurrentUploadQuantity,
         concurrentDownloadQuantity: data.concurrentDownloadQuantity,
         chunkSize: data.chunkSize,
@@ -176,6 +187,7 @@ export function TransferForm() {
     }
   }
 
+  /** 输入类字段变更：800ms 防抖后自动保存 */
   const handleFieldChange = () => {
     if (saveTimeoutRef.current) {
       clearTimeout(saveTimeoutRef.current)
@@ -186,6 +198,7 @@ export function TransferForm() {
     }, 800)
   }
 
+  /** 选择类字段变更：立即保存（短延迟确保 state 已更新） */
   const handleImmediateChange = (callback: () => void) => {
     callback()
     if (saveTimeoutRef.current) {

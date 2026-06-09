@@ -240,6 +240,11 @@ public class FileTransferTaskServiceImpl extends ServiceImpl<FileTransferTaskMap
         }
     }
 
+    /**
+     * 校验上传（秒传检测 + 分片初始化）
+     * <p>先按 MD5 在工作空间内查重并确认存储端对象存在则秒传完成；
+     * 否则向存储平台发起 multipart 上传并返回 uploadId。</p>
+     */
     @Override
     public CheckUploadResultVO checkUpload(CheckUploadCmd cmd) {
         // 【核心亮点-秒传 & 分片】MD5 查库 + 存储存在性校验 → 秒传；否则 initiateMultipartUpload 走分片链路

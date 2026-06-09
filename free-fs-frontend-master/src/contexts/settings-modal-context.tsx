@@ -1,3 +1,9 @@
+/**
+ * 设置弹窗全局状态
+ *
+ * 控制设置对话框的开关与当前 Tab（个人资料、外观、传输、工作空间等），
+ * 供侧边栏、命令菜单等任意位置打开指定设置面板。
+ */
 import {
   createContext,
   useCallback,
@@ -7,6 +13,7 @@ import {
   type ReactNode,
 } from 'react'
 
+/** 设置弹窗内可切换的面板 Tab */
 export type SettingsTab =
   | 'profile'
   | 'appearance'
@@ -16,16 +23,19 @@ export type SettingsTab =
   | 'roles'
 
 type SettingsModalValue = {
+  /** 弹窗是否打开 */
   open: boolean
   setOpen: (open: boolean) => void
+  /** 当前选中的 Tab */
   tab: SettingsTab
   setTab: (tab: SettingsTab) => void
-  /** 打开设置；可指定初始面板，默认个人资料 */
+  /** 打开设置弹窗；可指定初始 Tab，默认个人资料 */
   openSettings: (tab?: SettingsTab) => void
 }
 
 const SettingsModalContext = createContext<SettingsModalValue | null>(null)
 
+/** 设置弹窗 Provider */
 export function SettingsModalProvider({ children }: { children: ReactNode }) {
   const [open, setOpen] = useState(false)
   const [tab, setTab] = useState<SettingsTab>('profile')
@@ -53,6 +63,7 @@ export function SettingsModalProvider({ children }: { children: ReactNode }) {
   )
 }
 
+/** 获取设置弹窗上下文 */
 export function useSettingsModal() {
   const ctx = useContext(SettingsModalContext)
   if (!ctx) {

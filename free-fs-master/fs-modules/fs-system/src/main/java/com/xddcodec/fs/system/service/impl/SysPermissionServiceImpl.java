@@ -14,9 +14,9 @@ import java.util.List;
 
 /**
  * 权限服务实现类
+ * <p>提供系统预置权限码的全量查询，结果缓存至 {@code permissions} 供角色配置使用。</p>
  *
- * @Author: xddcode
- * @Date: 2026/3/30 10:11
+ * @author xddcode
  */
 @Service
 @RequiredArgsConstructor

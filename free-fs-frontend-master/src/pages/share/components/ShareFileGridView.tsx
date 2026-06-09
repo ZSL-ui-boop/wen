@@ -1,3 +1,7 @@
+/**
+ * 分享页文件网格视图
+ * 卡片式展示分享文件，按 scope 控制操作按钮
+ */
 import { useTranslation } from 'react-i18next'
 import type { FileItem } from '@/types/file'
 import { Eye, Download, MoreVertical } from 'lucide-react'
@@ -21,6 +25,7 @@ interface ShareFileGridViewProps {
   onDownload: (file: FileItem) => void
 }
 
+/** 分享页网格模式文件展示 */
 export function ShareFileGridView({
   fileList,
   scope,

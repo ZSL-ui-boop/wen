@@ -39,10 +39,11 @@ import java.util.stream.Collectors;
 import static com.xddcodec.fs.storage.domain.table.StorageSettingTableDef.STORAGE_SETTING;
 
 /**
- * 存储平台配置业务接口实现
+ * 存储平台配置服务实现
+ * <p>管理工作空间维度的存储配置 CRUD、启用/禁用互斥逻辑及缓存失效。
+ * 启用新配置时会自动禁用同工作空间其他已启用配置，并刷新 {@link com.xddcodec.fs.storage.facade.StorageServiceFacade} 实例缓存。</p>
  *
- * @Author: xddcode
- * @Date: 2024/10/25 14:38
+ * @author xddcode
  */
 @Slf4j
 @Service
@@ -124,6 +125,10 @@ public class StorageSettingServiceImpl extends ServiceImpl<StorageSettingMapper,
         return result;
     }
 
+    /**
+     * 启用或禁用存储配置
+     * <p>同一工作空间仅允许一个配置处于启用状态；禁用时同步移除插件实例缓存。</p>
+     */
     @Override
     @Transactional(rollbackFor = Exception.class)
     @Caching(evict = {

@@ -1,3 +1,7 @@
+/**
+ * 存储增长趋势图
+ * 封装 ChartAreaInteractive，支持首页与大屏两种展示样式
+ */
 import type { HomeUsedBytesUnit } from '@/api/home'
 import { ChartAreaInteractive } from '@/components/chart-area-interactive'
 import { cn } from '@/lib/utils'

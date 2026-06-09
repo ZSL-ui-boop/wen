@@ -22,6 +22,12 @@ import java.util.List;
 import java.util.Map;
 import java.util.Set;
 
+/**
+ * 七牛云 Kodo 存储插件实现
+ * <p>基于七牛 SDK 实现文件上传、下载、分片上传及预签名 URL 等操作。</p>
+ *
+ * @author xddcode
+ */
 @Slf4j
 @StoragePlugin(
         identifier = "Kodo",

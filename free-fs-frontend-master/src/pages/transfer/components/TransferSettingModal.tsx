@@ -1,3 +1,7 @@
+/**
+ * 传输设置弹窗
+ * 配置上传并发、分片大小、断点续传等传输参数
+ */
 import { useState, useEffect } from 'react'
 import { useTranslation } from 'react-i18next'
 import type { TransferSettingForm } from '@/types/transfer-setting'

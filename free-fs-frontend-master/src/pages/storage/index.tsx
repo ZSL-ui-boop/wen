@@ -1,3 +1,7 @@
+/**
+ * 存储配置页
+ * 管理工作空间下的存储平台绑定，支持搜索、排序与新增
+ */
 import { type ChangeEvent, useState } from 'react'
 import { useTranslation } from 'react-i18next'
 import { useParams } from 'react-router-dom'
@@ -24,6 +28,7 @@ import { SidebarTrigger } from '@/components/ui/sidebar'
 import { AddStorageModal } from './components/AddStorageModal'
 import { StorageSettingCard } from './components/StorageSettingCard'
 
+/** 用户存储平台配置管理页 */
 export default function StoragePage() {
   const { t } = useTranslation('storage')
   const { t: tc } = useTranslation('common')

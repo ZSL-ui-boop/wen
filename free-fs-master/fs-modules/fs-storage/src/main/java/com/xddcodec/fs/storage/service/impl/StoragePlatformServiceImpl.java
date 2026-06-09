@@ -16,10 +16,10 @@ import java.util.List;
 import static com.xddcodec.fs.storage.domain.table.StoragePlatformTableDef.STORAGE_PLATFORM;
 
 /**
- * 存储平台业务接口实现
+ * 存储平台元数据服务实现
+ * <p>查询已注册的存储平台类型列表（Local、AliyunOSS、Minio 等），供前端配置界面展示。</p>
  *
- * @Author: xddcode
- * @Date: 2024/10/25 14:38
+ * @author xddcode
  */
 @Service
 @RequiredArgsConstructor

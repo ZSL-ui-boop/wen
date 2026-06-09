@@ -1,3 +1,7 @@
+/**
+ * 首页分类快捷入口
+ * 根据文件类型生成跳转到文件管理页的链接卡片
+ */
 import type { TFunction } from 'i18next'
 import type { LucideIcon } from 'lucide-react'
 import {

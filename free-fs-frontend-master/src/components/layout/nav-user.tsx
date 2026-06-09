@@ -1,3 +1,7 @@
+/**
+ * @file 侧栏用户菜单
+ * @description 展示当前用户头像与信息，提供账户设置与退出登录。
+ */
 import { useTranslation } from 'react-i18next'
 import { useAuth } from '@/contexts/auth-context'
 import {
@@ -32,6 +36,9 @@ interface NavUserProps {
   }
 }
 
+/**
+ * 侧栏底部用户下拉菜单。
+ */
 export function NavUser({ user }: NavUserProps) {
   const { t } = useTranslation('layout')
   const navigate = useNavigate()

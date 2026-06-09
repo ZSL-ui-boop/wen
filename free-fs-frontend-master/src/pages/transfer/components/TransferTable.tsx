@@ -1,3 +1,7 @@
+/**
+ * 传输任务表格
+ * 展示任务进度、速度、状态，并提供暂停/恢复/取消/重试操作
+ */
 import * as React from 'react'
 import { useTranslation } from 'react-i18next'
 import { useTransferStore } from '@/store/transfer'

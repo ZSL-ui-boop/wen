@@ -1,3 +1,7 @@
+/**
+ * 注册表单内容
+ * 支持普通注册与邀请 token 注册，注册成功后自动登录
+ */
 import { useState, useEffect } from 'react'
 import { useTranslation } from 'react-i18next'
 import { useNavigate, useSearchParams } from 'react-router-dom'
@@ -15,6 +19,7 @@ interface Props {
   inviteToken?: string
 }
 
+/** 用户注册表单 */
 export default function RegisterFormContent({ onSwitchForm, inviteToken }: Props) {
   const { t } = useTranslation('login')
   const navigate = useNavigate()

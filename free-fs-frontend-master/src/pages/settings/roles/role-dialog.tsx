@@ -1,3 +1,7 @@
+/**
+ * 角色编辑弹窗
+ * 创建或编辑自定义角色，勾选权限码
+ */
 import { useState, useEffect, useMemo } from 'react'
 import { useTranslation } from 'react-i18next'
 import { toast } from 'sonner'
@@ -25,6 +29,7 @@ interface RoleDialogProps {
   onSuccess: () => void
 }
 
+/** 角色创建/编辑弹窗：填写基本信息并勾选权限码 */
 export function RoleDialog({
   open,
   onOpenChange,
@@ -45,6 +50,7 @@ export function RoleDialog({
 
   const busy = initializing || saving
 
+  // 弹窗打开时：新建重置表单，编辑则拉取角色详情
   useEffect(() => {
     if (!open) return
     if (!role) {
@@ -60,6 +66,7 @@ export function RoleDialog({
       .get(role.id)
       .then((data) => {
         if (cancelled) return
+        // 预设角色不可编辑
         if (data.roleType === 0) {
           toast.error(t('roles.presetReadonly'))
           onOpenChange(false)
@@ -81,6 +88,7 @@ export function RoleDialog({
     }
   }, [open, role, onOpenChange, t])
 
+  /** 按模块分组权限定义，便于批量勾选 */
   const groupedPermissions = useMemo(() => {
     const sorted = [...permissionDefs].sort(
       (a, b) => (a.sort ?? 0) - (b.sort ?? 0)
@@ -94,6 +102,7 @@ export function RoleDialog({
     return map
   }, [permissionDefs])
 
+  /** 切换单个权限码的选中状态 */
   const togglePermission = (code: PermissionCodeType) => {
     setSelectedPermissions((prev) => {
       const next = new Set(prev)
@@ -106,6 +115,7 @@ export function RoleDialog({
     })
   }
 
+  /** 模块级全选/取消全选 */
   const toggleModuleAll = (moduleDefs: PermissionDef[]) => {
     const codes = moduleDefs.map((d) => d.permissionCode)
     const allSelected = codes.every((c) => selectedPermissions.has(c))
@@ -122,6 +132,7 @@ export function RoleDialog({
     })
   }
 
+  /** 校验并提交创建/更新请求 */
   const handleSubmit = async (e: React.FormEvent) => {
     e.preventDefault()
     if (!roleName.trim()) {

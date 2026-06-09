@@ -47,9 +47,10 @@ import static com.xddcodec.fs.file.domain.table.FileUserFavoritesTableDef.FILE_U
 
 /**
  * 文件资源服务实现类
+ * <p>负责文件元数据管理（目录树、重命名、移动、回收站标记）及与存储插件的读流对接。
+ * 所有查询均按当前工作空间 {@link com.xddcodec.fs.framework.common.context.WorkspaceContext} 隔离。</p>
  *
- * @Author: xddcode
- * @Date: 2025/5/8 9:40
+ * @author xddcode
  */
 @Slf4j
 @Service
@@ -61,6 +62,12 @@ public class FileInfoServiceImpl extends ServiceImpl<FileInfoMapper, FileInfo> i
     @Autowired
     private StorageServiceFacade storageServiceFacade;
 
+    /**
+     * 从存储平台下载文件流
+     *
+     * @param fileId 文件 ID
+     * @return 文件输入流
+     */
     @Override
     public InputStream downloadFile(String fileId) {
         FileInfo fileInfo = getById(fileId);
@@ -104,6 +111,10 @@ public class FileInfoServiceImpl extends ServiceImpl<FileInfoMapper, FileInfo> i
         return storageService.getFileUrl(fileInfo.getObjectKey(), expireSeconds);
     }
 
+    /**
+     * 将文件移入回收站（逻辑删除）
+     * <p>若选中目录，会递归标记其下所有子文件/子目录。</p>
+     */
     @Override
     @Transactional(rollbackFor = Exception.class)
     public void moveFilesToRecycleBin(List<String> fileIds) {

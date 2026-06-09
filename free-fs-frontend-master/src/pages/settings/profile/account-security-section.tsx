@@ -1,3 +1,7 @@
+/**
+ * 账号安全设置区
+ * 修改邮箱与密码的入口与弹窗管理
+ */
 import { useState } from 'react'
 import { useTranslation } from 'react-i18next'
 import { useAuth } from '@/contexts/auth-context'
@@ -11,6 +15,7 @@ import {
 } from '@/components/ui/dialog'
 import { EmailChangeForm, PasswordChangeForm } from './account-forms'
 
+/** 账号安全设置区：邮箱与密码管理入口及弹窗 */
 export function AccountSecuritySection() {
   const { t } = useTranslation('settings')
   const { user } = useAuth()
@@ -59,6 +64,7 @@ export function AccountSecuritySection() {
         </div>
       </div>
 
+      {/* 修改邮箱弹窗 */}
       <Dialog open={emailOpen} onOpenChange={setEmailOpen}>
         <DialogContent className='sm:max-w-md'>
           <DialogHeader>
@@ -74,6 +80,7 @@ export function AccountSecuritySection() {
         </DialogContent>
       </Dialog>
 
+      {/* 修改/设置密码弹窗（未设置密码时走 set 模式） */}
       <Dialog open={passwordOpen} onOpenChange={setPasswordOpen}>
         <DialogContent className='sm:max-w-md'>
           <DialogHeader>

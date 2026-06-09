@@ -1,3 +1,7 @@
+/**
+ * 设置内容区布局
+ * 标题、描述与可滚动内容区域的通用容器
+ */
 import { Separator } from '@/components/ui/separator'
 import { cn } from '@/lib/utils'
 import {
@@ -13,6 +17,7 @@ type ContentSectionProps = {
   fullWidth?: boolean
 }
 
+/** 设置子页内容区：标题 + 描述 + 滚动内容 */
 export function ContentSection({
   title,
   desc,

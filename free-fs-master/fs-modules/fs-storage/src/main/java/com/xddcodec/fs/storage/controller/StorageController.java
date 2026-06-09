@@ -19,6 +19,13 @@ import org.springframework.web.bind.annotation.*;
 
 import java.util.List;
 
+/**
+ * 存储平台配置控制器
+ * <p>管理工作空间级别的存储平台启用/禁用、配置增删改及已激活平台列表查询。
+ * 写操作需 {@code storage:manage} 权限。</p>
+ *
+ * @author xddcode
+ */
 @Validated
 @RestController
 @RequestMapping("/apis/storage")

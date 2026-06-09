@@ -1,3 +1,7 @@
+/**
+ * @file 确认对话框
+ * @description 基于 AlertDialog 的二次确认弹窗，支持 destructive 样式与加载态。
+ */
 import { cn } from '@/lib/utils'
 import {
   AlertDialog,
@@ -25,6 +29,7 @@ type ConfirmDialogProps = {
   children?: React.ReactNode
 }
 
+/** 通用确认对话框：open 为 true 时才挂载内容，避免多余 DOM */
 export function ConfirmDialog(props: ConfirmDialogProps) {
   const {
     title,

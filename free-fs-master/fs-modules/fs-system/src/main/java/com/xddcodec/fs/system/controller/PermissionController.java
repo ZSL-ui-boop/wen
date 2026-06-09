@@ -13,6 +13,12 @@ import org.springframework.web.bind.annotation.RestController;
 
 import java.util.List;
 
+/**
+ * 权限控制器
+ * <p>返回系统预置权限码列表，供角色配置界面勾选使用。</p>
+ *
+ * @author xddcode
+ */
 @Validated
 @RestController
 @RequestMapping("/apis/permission")

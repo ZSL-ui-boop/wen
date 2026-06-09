@@ -1,3 +1,7 @@
+/**
+ * 上传进度浮层面板
+ * 固定在页面底部，展示当前上传任务进度，完成后触发列表刷新
+ */
 import { useState, useEffect, useMemo } from 'react'
 import { useTranslation } from 'react-i18next'
 import { useTransferStore } from '@/store/transfer'
@@ -23,6 +27,7 @@ interface UploadPanelProps {
   onSuccess?: () => void
 }
 
+/** 底部上传进度面板 */
 export default function UploadPanel({ onSuccess }: UploadPanelProps) {
   const { t } = useTranslation('files')
   const [showPanel, setShowPanel] = useState(false)

@@ -1,5 +1,10 @@
+/**
+ * @file AI 聊天本地存储
+ * @description 按工作空间持久化会话、消息、深度思考与 Agent 模式偏好至 localStorage。
+ */
 import { getCurrentWorkspaceId } from '@/store/workspace'
 
+/** 单条 AI 对话消息（持久化结构） */
 export type StoredAiMessage = {
   id: string
   role: 'user' | 'assistant'
@@ -9,6 +14,7 @@ export type StoredAiMessage = {
   answer?: string
 }
 
+/** 单个聊天会话 */
 export type AiChatSession = {
   id: string
   title: string
@@ -16,6 +22,7 @@ export type AiChatSession = {
   messages: StoredAiMessage[]
 }
 
+/** 工作空间级 AI 存储根结构 */
 export type AiWorkspaceStore = {
   activeSessionId: string
   deepThink: boolean
@@ -29,16 +36,19 @@ const MAX_SESSIONS = 30
 const MAX_MEMORY_ITEMS = 20
 const MAX_MEMORY_LEN = 500
 
+/** 生成当前工作空间的 localStorage 键 */
 function storeKey(): string {
   const ws = getCurrentWorkspaceId() || 'default'
   return `free-fs-ai-store:${ws}`
 }
 
+/** 旧版单会话存储键（用于迁移） */
 function legacyKey(): string {
   const ws = getCurrentWorkspaceId() || 'default'
   return `free-fs-ai-chat:${ws}`
 }
 
+/** 根据首条用户消息生成会话标题 */
 function sessionTitle(messages: StoredAiMessage[]): string {
   const first = messages.find((m) => m.role === 'user' && m.content.trim())
   if (!first) return '新对话'
@@ -46,6 +56,7 @@ function sessionTitle(messages: StoredAiMessage[]): string {
   return t.length > 28 ? `${t.slice(0, 28)}…` : t
 }
 
+/** 创建新会话对象 */
 function newSession(messages: StoredAiMessage[] = []): AiChatSession {
   const now = Date.now()
   return {
@@ -56,6 +67,7 @@ function newSession(messages: StoredAiMessage[] = []): AiChatSession {
   }
 }
 
+/** 默认空存储（含一个空会话） */
 function defaultStore(): AiWorkspaceStore {
   const session = newSession()
   return {
@@ -67,6 +79,7 @@ function defaultStore(): AiWorkspaceStore {
   }
 }
 
+/** 从旧版单会话格式迁移到新多会话结构 */
 function migrateLegacy(): AiWorkspaceStore | null {
   try {
     const raw = localStorage.getItem(legacyKey())
@@ -90,6 +103,7 @@ function migrateLegacy(): AiWorkspaceStore | null {
   }
 }
 
+/** 从 localStorage 加载 AI 存储，必要时执行旧数据迁移 */
 export function loadAiStore(): AiWorkspaceStore {
   try {
     const raw = localStorage.getItem(storeKey())
@@ -133,6 +147,7 @@ export function loadAiStore(): AiWorkspaceStore {
   }
 }
 
+/** 将完整存储写入 localStorage */
 export function persistStore(store: AiWorkspaceStore) {
   try {
     localStorage.setItem(storeKey(), JSON.stringify(store))
@@ -141,6 +156,7 @@ export function persistStore(store: AiWorkspaceStore) {
   }
 }
 
+/** 获取当前激活的会话 */
 export function getActiveSession(store: AiWorkspaceStore): AiChatSession {
   return (
     store.sessions.find((s) => s.id === store.activeSessionId) ??
@@ -148,6 +164,7 @@ export function getActiveSession(store: AiWorkspaceStore): AiChatSession {
   )
 }
 
+/** 更新当前会话消息及模式偏好 */
 export function updateActiveSession(
   store: AiWorkspaceStore,
   messages: StoredAiMessage[],
@@ -168,6 +185,7 @@ export function updateActiveSession(
   return { ...store, sessions, deepThink, agentMode }
 }
 
+/** 新建会话并设为当前激活 */
 export function createNewSession(store: AiWorkspaceStore): AiWorkspaceStore {
   const session = newSession()
   const sessions = [session, ...store.sessions].slice(0, MAX_SESSIONS)
@@ -178,6 +196,7 @@ export function createNewSession(store: AiWorkspaceStore): AiWorkspaceStore {
   }
 }
 
+/** 切换到指定会话，不存在则返回 null */
 export function switchSession(
   store: AiWorkspaceStore,
   sessionId: string
@@ -186,6 +205,7 @@ export function switchSession(
   return { ...store, activeSessionId: sessionId }
 }
 
+/** 删除会话；仅剩一条时重置为空会话 */
 export function deleteSession(
   store: AiWorkspaceStore,
   sessionId: string
@@ -206,6 +226,7 @@ export function deleteSession(
   return { ...store, sessions, activeSessionId }
 }
 
+/** 向记忆列表追加一条（去重、截断长度与数量） */
 export function addMemoryItem(store: AiWorkspaceStore, text: string): AiWorkspaceStore {
   const item = text.trim().slice(0, MAX_MEMORY_LEN)
   if (!item || store.memory.includes(item)) return store
@@ -215,6 +236,7 @@ export function addMemoryItem(store: AiWorkspaceStore, text: string): AiWorkspac
   }
 }
 
+/** 按索引移除记忆项 */
 export function removeMemoryItem(store: AiWorkspaceStore, index: number): AiWorkspaceStore {
   return {
     ...store,

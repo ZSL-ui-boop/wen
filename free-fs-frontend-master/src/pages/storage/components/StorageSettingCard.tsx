@@ -1,3 +1,7 @@
+/**
+ * 存储配置卡片
+ * 展示单个存储平台绑定信息，支持启用/禁用、编辑与删除
+ */
 import { useState } from 'react'
 import { useTranslation } from 'react-i18next'
 import type { StorageSetting, ConfigScheme } from '@/types/storage'

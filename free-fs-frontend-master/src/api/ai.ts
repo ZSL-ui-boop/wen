@@ -1,30 +1,48 @@
+/**
+ * AI 对话 API 模块
+ *
+ * 提供 AI 服务状态查询、SSE 流式对话及深度思考/Agent 模式内容解析工具。
+ * 流式对话使用原生 fetch（非 axios），以支持 ReadableStream。
+ */
 import { request } from '@/api/request'
 import { getToken } from '@/utils/auth'
 import { getRequestLangHeader } from '@/i18n'
 import { getCurrentWorkspaceId } from '@/store/workspace'
 
+/** AI 对话消息结构 */
 export interface AiChatMessage {
   role: 'user' | 'assistant' | 'system'
   content: string
 }
 
+/** SSE meta 事件携带的模式信息 */
 export interface AiStreamMeta {
   deepThink: boolean
   agentMode: boolean
 }
 
+/** 流式对话回调处理器 */
 export interface AiStreamHandlers {
+  /** 收到 meta 事件时触发 */
   onMeta?: (meta: AiStreamMeta) => void
+  /** 收到增量文本时触发 */
   onDelta?: (text: string) => void
+  /** 流式结束时触发 */
   onDone?: () => void
+  /** 发生错误时触发 */
   onError?: (message: string) => void
 }
 
+/** AI 服务可用状态 */
 export interface AiStatus {
   enabled: boolean
   model: string
 }
 
+/**
+ * 从 localStorage 读取当前存储平台配置 ID
+ * @returns settingId 或 null
+ */
 function getStoragePlatformHeader(): string | null {
   const raw = localStorage.getItem('current-storage-platform')
   if (!raw) return null
@@ -36,6 +54,10 @@ function getStoragePlatformHeader(): string | null {
   }
 }
 
+/**
+ * 构建 AI 流式请求所需的认证与作用域请求头
+ * 与 axios 拦截器逻辑保持一致
+ */
 function buildAuthHeaders(): Record<string, string> {
   const headers: Record<string, string> = {
     'Content-Type': 'application/json',
@@ -50,7 +72,12 @@ function buildAuthHeaders(): Record<string, string> {
   return headers
 }
 
-/** 开发环境走 Vite 代理（/apis → 8081），避免跨域导致 fetch 流式失败 */
+/**
+ * 解析 API 完整 URL
+ * 开发环境走 Vite 代理（/apis → 8081），避免跨域导致 fetch 流式失败
+ * @param path 接口路径（如 /apis/ai/chat）
+ * @returns 可直接 fetch 的 URL
+ */
 export function resolveApiUrl(path: string): string {
   if (import.meta.env.DEV) {
     return path
@@ -59,6 +86,11 @@ export function resolveApiUrl(path: string): string {
   return base ? `${base}${path}` : path
 }
 
+/**
+ * 查询 AI 服务是否可用及当前模型名称
+ * 404 时视为已启用（接口未部署），避免误判为未配置
+ * @returns AI 服务状态
+ */
 export async function fetchAiStatus(): Promise<AiStatus> {
   try {
     const data = await request.get<AiStatus>('/apis/ai/status', {
@@ -78,6 +110,11 @@ export async function fetchAiStatus(): Promise<AiStatus> {
   }
 }
 
+/**
+ * 解析 HTTP 错误响应体，提取可读错误信息
+ * @param res fetch Response 对象
+ * @returns 错误描述字符串
+ */
 async function parseHttpError(res: Response): Promise<string> {
   try {
     const text = await res.text()
@@ -91,7 +128,11 @@ async function parseHttpError(res: Response): Promise<string> {
 }
 
 /**
- * POST /apis/ai/chat，SSE 流式（event: meta | delta | done | error）
+ * 发起 AI 流式对话（SSE）
+ * POST /apis/ai/chat，事件类型：meta | delta | done | error
+ * @param payload 消息内容、模式开关、上下文与历史
+ * @param handlers 流式事件回调
+ * @param signal AbortSignal，用于取消请求
  */
 export async function streamAiChat(
   payload: {
@@ -105,6 +146,7 @@ export async function streamAiChat(
   handlers: AiStreamHandlers,
   signal?: AbortSignal
 ): Promise<void> {
+  // 确保 onDone/onError 只触发一次
   let settled = false
   const finish = (fn: () => void) => {
     if (settled) return
@@ -149,6 +191,7 @@ export async function streamAiChat(
   const decoder = new TextDecoder()
   let buffer = ''
 
+  /** 解析单个 SSE 事件块（event + data 行） */
   const processBlock = (block: string) => {
     const lines = block.split('\n')
     let eventName = 'message'
@@ -176,11 +219,12 @@ export async function streamAiChat(
         finish(() => handlers.onError?.(String(data.message ?? 'AI error')))
       }
     } catch {
-      /* ignore malformed chunk */
+      /* 忽略格式错误的 chunk */
     }
   }
 
   try {
+    // 按 \n\n 分割 SSE 事件块，保留未完整的尾部到 buffer
     while (true) {
       const { done, value } = await reader.read()
       if (done) break
@@ -201,7 +245,12 @@ export async function streamAiChat(
   }
 }
 
-/** 解析深度思考标签 */
+/**
+ * 解析深度思考模式的 XML 标签内容
+ * 模型输出格式：<thinking>...</thinking><answer>...</answer>
+ * @param raw 原始流式文本
+ * @returns 思考内容、回答内容及是否仍在思考中
+ */
 export function parseDeepThinkContent(raw: string): {
   thinking: string
   answer: string
@@ -218,7 +267,12 @@ export function parseDeepThinkContent(raw: string): {
   }
 }
 
-/** 流式结束后整理展示内容（模型未按标签输出时回退为全文） */
+/**
+ * 流式结束后整理深度思考展示内容
+ * 模型未按标签输出时回退为全文
+ * @param raw 完整原始文本
+ * @returns 最终思考与回答内容
+ */
 export function finalizeDeepThinkContent(raw: string): {
   thinking: string
   answer: string
@@ -227,6 +281,7 @@ export function finalizeDeepThinkContent(raw: string): {
   let answer = parsed.answer
   const thinking = parsed.thinking
   if (!answer && raw.trim()) {
+    // 无 answer 标签时，剥离 thinking 标签后剩余作为回答
     answer = raw
       .replace(/<\/?thinking>/gi, '')
       .replace(/<\/?answer>/gi, '')
@@ -235,7 +290,12 @@ export function finalizeDeepThinkContent(raw: string): {
   return { thinking, answer: answer || raw.trim() }
 }
 
-/** 解析 Agent 模式标签 */
+/**
+ * 解析 Agent 模式的 XML 标签内容
+ * 模型输出格式：<plan>...</plan><answer>...</answer>
+ * @param raw 原始流式文本
+ * @returns 计划内容、回答内容及是否仍在规划中
+ */
 export function parseAgentContent(raw: string): {
   plan: string
   answer: string
@@ -252,11 +312,17 @@ export function parseAgentContent(raw: string): {
   }
 }
 
-/** 模型未输出 plan/answer 标签时，按步骤列表启发式拆分 */
+/**
+ * Agent 模式启发式回退拆分
+ * 模型未输出 plan/answer 标签时，按步骤列表与结论段落拆分
+ * @param raw 原始文本
+ * @returns 计划与回答两部分
+ */
 function splitAgentFallback(raw: string): { plan: string; answer: string } {
   const text = raw.trim()
   if (!text) return { plan: '', answer: '' }
 
+  // 优先按「结论/总结/回答」等标题分段
   const sectionMatch = text.match(
     /^([\s\S]*?)\n(?:#{1,3}\s*)?(?:结论|总结|操作建议|回答|建议)[:：]?\s*\n([\s\S]+)$/im
   )
@@ -271,6 +337,7 @@ function splitAgentFallback(raw: string): { plan: string; answer: string } {
   let firstStep = lines.findIndex(isStepLine)
   if (firstStep < 0) return { plan: '', answer: text }
 
+  // 从第一个非步骤行起视为回答部分
   let splitAt = lines.length
   for (let i = firstStep + 1; i < lines.length; i++) {
     const line = lines[i]
@@ -298,6 +365,11 @@ function splitAgentFallback(raw: string): { plan: string; answer: string } {
   return { plan: '', answer: text }
 }
 
+/**
+ * 流式结束后整理 Agent 模式展示内容
+ * @param raw 完整原始文本
+ * @returns 最终计划与回答内容
+ */
 export function finalizeAgentContent(raw: string): { plan: string; answer: string } {
   const parsed = parseAgentContent(raw)
   if (parsed.plan || parsed.answer) {
@@ -314,6 +386,7 @@ export function finalizeAgentContent(raw: string): { plan: string; answer: strin
   return splitAgentFallback(raw)
 }
 
+/** 流式解析结果（含进行中状态） */
 export type AiStreamParts = {
   thinking: string
   plan: string
@@ -321,6 +394,12 @@ export type AiStreamParts = {
   inProgress: boolean
 }
 
+/**
+ * 根据当前模式解析流式文本为展示片段
+ * @param raw 当前累积的流式文本
+ * @param mode agentMode / deepThink 开关
+ * @returns 思考/计划/回答片段及是否仍在生成中
+ */
 export function parseStreamParts(
   raw: string,
   mode: { agentMode: boolean; deepThink: boolean }
@@ -343,9 +422,16 @@ export function parseStreamParts(
       inProgress: p.inThinking || (Boolean(p.thinking) && !p.answer),
     }
   }
+  // 普通模式：全文即回答
   return { thinking: '', plan: '', answer: raw, inProgress: false }
 }
 
+/**
+ * 流式结束后根据模式整理最终展示内容
+ * @param raw 完整原始文本
+ * @param mode agentMode / deepThink 开关
+ * @returns 最终思考、计划、回答三部分
+ */
 export function finalizeStreamParts(
   raw: string,
   mode: { agentMode: boolean; deepThink: boolean }

@@ -1,3 +1,7 @@
+/**
+ * 文件管理工具栏
+ * 搜索、上传、新建文件夹与刷新操作入口
+ */
 import { useTranslation } from 'react-i18next'
 import { Search, Upload, FolderPlus, RefreshCw, FolderUp } from 'lucide-react'
 import { Button } from '@/components/ui/button'

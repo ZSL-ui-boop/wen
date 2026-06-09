@@ -1,3 +1,7 @@
+/**
+ * @file 主题 Provider
+ * @description 管理 light/dark/system 主题，支持 View Transition API 切换动画。
+ */
 import { createContext, useContext, useEffect, useState } from 'react'
 import { flushSync } from 'react-dom'
 
@@ -21,6 +25,9 @@ const initialState: ThemeProviderState = {
 
 const ThemeProviderContext = createContext<ThemeProviderState>(initialState)
 
+/**
+ * 主题上下文 Provider，将 theme 类名同步到 documentElement。
+ */
 export function ThemeProvider({
   children,
   defaultTheme = 'system',
@@ -100,6 +107,7 @@ export function ThemeProvider({
   )
 }
 
+/** 获取当前主题与 setTheme，须在 ThemeProvider 内使用 */
 export const useTheme = () => {
   const context = useContext(ThemeProviderContext)
 

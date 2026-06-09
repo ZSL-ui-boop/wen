@@ -17,6 +17,13 @@ import org.springframework.web.bind.annotation.ResponseBody;
 
 import java.util.UUID;
 
+/**
+ * 文件在线预览控制器（服务端渲染）
+ * <p>负责签发短时预览 token 并渲染预览页面；实际文件流由 {@link FileStreamController} 提供。
+ * token 写入 Redis，预览页与流请求需经 {@link com.xddcodec.fs.interceptor.PreviewInterceptor} 校验。</p>
+ *
+ * @author xddcode
+ */
 @Slf4j
 @Controller
 @RequiredArgsConstructor

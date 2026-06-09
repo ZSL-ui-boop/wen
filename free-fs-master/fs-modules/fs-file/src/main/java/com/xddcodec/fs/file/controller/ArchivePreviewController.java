@@ -15,6 +15,10 @@ import java.util.UUID;
 
 /**
  * 压缩包内文件预览控制器
+ * <p>支持在不解压到本地的情况下预览 ZIP/RAR 等压缩包内的单个文件。
+ * 预览 token 的 Redis 值格式为 {@code archiveFileId|innerPath}，与 {@link com.xddcodec.fs.interceptor.PreviewInterceptor} 配合校验。</p>
+ *
+ * @author xddcode
  */
 @Slf4j
 @Controller

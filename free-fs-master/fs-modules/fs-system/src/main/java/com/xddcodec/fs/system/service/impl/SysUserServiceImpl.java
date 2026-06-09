@@ -39,10 +39,11 @@ import java.util.Objects;
 import static com.xddcodec.fs.system.domain.table.SysUserTableDef.SYS_USER;
 
 /**
- * 用户表 服务实现类
+ * 用户服务实现类
+ * <p>负责用户注册、资料编辑、密码管理、头像上传及邮箱变更（验证码校验）。
+ * 注册成功后自动初始化传输配置并处理待接受的 workspace 邀请。</p>
  *
- * @Author: xddcode
- * @Date: 2024/6/7 11:14
+ * @author xddcode
  */
 @Service
 @RequiredArgsConstructor

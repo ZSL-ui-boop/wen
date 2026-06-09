@@ -5,9 +5,9 @@ import com.xddcodec.fs.system.domain.vo.LoginResult;
 
 /**
  * 认证服务接口
+ * <p>封装登录策略调度、Sa-Token 会话签发及邮箱验证码发送。</p>
  *
- * @Author: xddcode
- * @Date: 2024/10/16 14:25
+ * @author xddcode
  */
 public interface AuthService {
 

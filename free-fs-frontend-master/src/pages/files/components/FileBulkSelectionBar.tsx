@@ -1,3 +1,7 @@
+/**
+ * 文件多选操作栏
+ * 固定在底部，提供批量下载/重命名/分享/收藏/移动/删除
+ */
 import { useTranslation } from 'react-i18next'
 import {
   Download,

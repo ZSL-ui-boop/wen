@@ -1,3 +1,8 @@
+/**
+ * 文件大屏主题样式常量
+ * 深色赛博风面板、光晕装饰等 Tailwind 类名组合
+ */
+
 /** 文件大屏统一面板样式（避免 Card 默认白底） */
 export const bigscreenPanelClass =
   '!rounded-2xl !border !border-cyan-500/20 !bg-slate-950/75 !text-cyan-50 shadow-[0_0_40px_rgba(34,211,238,0.06)] !backdrop-blur-xl'

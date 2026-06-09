@@ -32,6 +32,12 @@ import java.util.stream.Collectors;
 import static com.xddcodec.fs.file.domain.table.FileInfoTableDef.FILE_INFO;
 import static com.xddcodec.fs.file.domain.table.FileShareTableDef.FILE_SHARE;
 
+/**
+ * 文件首页服务实现
+ * <p>聚合存储用量、最近访问文件、活跃分享数及数据大屏趋势指标。</p>
+ *
+ * @author xddcode
+ */
 @Service
 @RequiredArgsConstructor
 public class FileHomeServiceImpl implements FileHomeService {

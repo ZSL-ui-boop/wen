@@ -1,3 +1,7 @@
+/**
+ * 成员管理设置页
+ * 成员列表、角色变更、移除成员与邀请管理
+ */
 import { useState, useEffect, useCallback, useMemo } from 'react'
 import { useTranslation } from 'react-i18next'
 import { toast } from 'sonner'
@@ -66,6 +70,7 @@ import { Tabs, TabsContent, TabsList, TabsTrigger } from '@/components/ui/tabs'
 
 const PAGE_SIZE = 10
 
+/** 设置 - 成员管理面板 */
 export function SettingsMembers() {
   const { t } = useTranslation('settings')
   const { hasPermission } = usePermission()

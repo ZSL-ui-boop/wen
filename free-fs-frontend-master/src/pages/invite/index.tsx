@@ -1,3 +1,7 @@
+/**
+ * 工作空间邀请页
+ * 验证邀请 token，引导注册/登录或直接接受邀请加入工作空间
+ */
 import { useEffect, useState } from 'react'
 import { useTranslation } from 'react-i18next'
 import { useSearchParams, useNavigate } from 'react-router-dom'
@@ -11,6 +15,7 @@ import { Button } from '@/components/ui/button'
 import { toast } from 'sonner'
 import { Loader2, Mail, Building2, UserCheck, AlertCircle, Clock } from 'lucide-react'
 
+/** 邀请链接落地页，URL 参数 token 为邀请凭证 */
 export default function InvitePage() {
   const { t } = useTranslation('invite')
   const [searchParams] = useSearchParams()

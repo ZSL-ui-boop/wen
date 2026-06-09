@@ -1,3 +1,7 @@
+/**
+ * @file 数据表格分页
+ * @description 页码导航、每页条数选择与首尾页跳转。
+ */
 import {
   ChevronLeftIcon,
   ChevronRightIcon,
@@ -21,6 +25,7 @@ type DataTablePaginationProps<TData> = {
   className?: string
 }
 
+/** 表格底部分页控件 */
 export function DataTablePagination<TData>({
   table,
   className,

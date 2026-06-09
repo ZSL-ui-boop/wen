@@ -1,7 +1,12 @@
+/**
+ * 404 未找到页面
+ * 展示错误提示并提供返回首页按钮
+ */
 import { useTranslation } from 'react-i18next'
 import { useNavigate } from 'react-router-dom'
 import { Button } from '@/components/ui/button'
 
+/** 404 页面组件 */
 export default function NotFoundPage() {
   const { t } = useTranslation('common')
   const navigate = useNavigate()

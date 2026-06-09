@@ -1,3 +1,7 @@
+/**
+ * @file AI 聊天面板
+ * @description 右侧 Sheet 抽屉式 AI 对话界面，支持普通聊天、Agent 模式、语音输入/播报与会话管理。
+ */
 import * as React from 'react'
 import {
   Bot,
@@ -55,18 +59,23 @@ import {
   type StoredAiMessage,
 } from './ai-chat-storage'
 
+/** UI 层消息：在持久化结构上扩展流式与失败状态 */
 type UiMessage = StoredAiMessage & {
   streaming?: boolean
   failed?: boolean
 }
 
+/** 普通聊天模式下的快捷提示词键 */
 const CHAT_PROMPT_KEYS = ['storage', 'share', 'upload'] as const
+/** Agent 模式下的快捷提示词键 */
 const AGENT_PROMPT_KEYS = ['analyze', 'cleanup', 'organize'] as const
 
+/** 判断助手消息是否因错误标记为失败 */
 function isFailedAssistant(m: UiMessage) {
   return m.role === 'assistant' && Boolean(m.failed)
 }
 
+/** 将 UI 消息转为 API 请求用的历史记录（最近 10 条有效消息） */
 function toHistory(messages: UiMessage[]): AiChatMessage[] {
   return messages
     .filter((m) => !m.streaming && !isFailedAssistant(m))
@@ -79,6 +88,7 @@ function toHistory(messages: UiMessage[]): AiChatMessage[] {
     .filter((m) => m.content.length > 0)
 }
 
+/** 格式化会话列表中的更新时间 */
 function formatSessionTime(ts: number) {
   const d = new Date(ts)
   const now = new Date()
@@ -92,6 +102,9 @@ function formatSessionTime(ts: number) {
   return d.toLocaleDateString(undefined, { month: 'short', day: 'numeric' })
 }
 
+/**
+ * AI 聊天主面板：流式对话、会话切换、深度思考与实时语音模式。
+ */
 export function AiChatPanel({
   open,
   onOpenChange,
@@ -181,6 +194,7 @@ export function AiChatPanel({
     [messages]
   )
 
+  /** 面板关闭时停止语音相关状态 */
   React.useEffect(() => {
     if (!open) {
       setVoiceRealtime(false)
@@ -191,6 +205,7 @@ export function AiChatPanel({
     }
   }, [open, stopListening, cancelSpeak])
 
+  /** 实时语音模式：在非加载/播报/未配置时自动重启听写 */
   React.useEffect(() => {
     if (!voiceRealtime || !open || !voiceSupported) return
     if (loading || speaking || aiReady === false) {
@@ -214,6 +229,7 @@ export function AiChatPanel({
     [speak, startListening, ttsSupported]
   )
 
+  /** 打开面板时从 localStorage 恢复会话与模式 */
   React.useEffect(() => {
     if (!open) return
     const s = loadAiStore()
@@ -232,6 +248,7 @@ export function AiChatPanel({
     })
   }, [open])
 
+  /** 防抖持久化：消息或模式变化 300ms 后写入 localStorage */
   React.useEffect(() => {
     if (!open || loading) return
     const timer = window.setTimeout(() => {
@@ -292,6 +309,7 @@ export function AiChatPanel({
     applySession(getActiveSession(next))
   }
 
+  /** 中止当前流式请求并将未完成消息标记为已停止 */
   const stop = () => {
     abortRef.current?.abort()
     abortRef.current = null
@@ -326,6 +344,10 @@ export function AiChatPanel({
     }
   }
 
+  /**
+   * 发送用户消息并流式接收助手回复。
+   * @param replaceLastPair - 为 true 时移除最后一轮问答后重试（用于失败重试）
+   */
   const runChat = async (text: string, options?: { replaceLastPair?: boolean }) => {
     if (!text || loading || aiReady === false) return
 
@@ -368,6 +390,7 @@ export function AiChatPanel({
       )
     }
 
+    // Agent 模式：先拉取工作空间上下文再发起对话
     let context = ''
     if (agentMode) {
       setLoadingContext(true)

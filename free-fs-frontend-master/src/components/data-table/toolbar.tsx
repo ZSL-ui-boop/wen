@@ -1,3 +1,7 @@
+/**
+ * @file 数据表格工具栏
+ * @description 搜索输入、分面筛选、重置与列显示选项的组合工具栏。
+ */
 import { Cross2Icon } from '@radix-ui/react-icons'
 import { type Table } from '@tanstack/react-table'
 import { Button } from '@/components/ui/button'
@@ -20,6 +24,9 @@ type DataTableToolbarProps<TData> = {
   }[]
 }
 
+/**
+ * 表格顶部工具栏：支持单列过滤或全局过滤，以及可选的分面筛选器。
+ */
 export function DataTableToolbar<TData>({
   table,
   searchPlaceholder = 'Filter...',

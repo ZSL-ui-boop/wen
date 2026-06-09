@@ -6,11 +6,10 @@ import com.xddcodec.fs.storage.plugin.core.config.StorageConfig;
 import com.xddcodec.fs.storage.plugin.core.s3.AbstractS3CompatibleStorageService;
 
 /**
- * RustFS 存储插件实现
- * 基于S3兼容协议的对象存储服务
+ * MinIO 存储插件实现
+ * <p>基于 S3 兼容协议，继承 {@link com.xddcodec.fs.storage.plugin.core.s3.AbstractS3CompatibleStorageService} 复用 AWS SDK 通用逻辑。</p>
  *
- * @Author: xddcode
- * @Date: 2026/01/12 22:06
+ * @author xddcode
  */
 @StoragePlugin(
         identifier = "Minio",

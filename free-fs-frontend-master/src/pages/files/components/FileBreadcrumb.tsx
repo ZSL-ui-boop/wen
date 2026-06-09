@@ -1,3 +1,7 @@
+/**
+ * 文件路径面包屑
+ * 展示当前目录层级，支持点击跳转与自定义标题（特殊视图）
+ */
 import { Fragment } from 'react'
 import { useTranslation } from 'react-i18next'
 import type { BreadcrumbItem } from '@/types/file'

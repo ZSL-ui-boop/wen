@@ -1,3 +1,7 @@
+/**
+ * 路由配置模块
+ * 定义登录、邀请、分享、工作空间及受保护页面的路由守卫与嵌套结构
+ */
 import { useEffect, useState } from 'react'
 import { useTranslation } from 'react-i18next'
 import { useAuth } from '@/contexts/auth-context'
@@ -24,6 +28,10 @@ import { AppLayout } from '@/components/layout/app-layout'
 import { SearchProvider } from '@/context/search-provider'
 import { NoPermission } from '@/components/no-permission'
 
+/**
+ * 受保护路由：校验登录态，可选校验权限码
+ * @param requiredPermission - 需要的工作空间权限，未传则仅要求登录
+ */
 function ProtectedRoute({
   children,
   requiredPermission,
@@ -35,6 +43,7 @@ function ProtectedRoute({
   const { isAuthenticated, isLoading } = useAuth()
   const { hasPermission } = usePermission()
 
+  // 认证状态加载中
   if (isLoading) {
     return (
       <div className='flex h-screen items-center justify-center'>
@@ -43,10 +52,12 @@ function ProtectedRoute({
     )
   }
 
+  // 未登录重定向到登录页
   if (!isAuthenticated) {
     return <Navigate to='/login' replace />
   }
 
+  // 权限不足展示无权限页
   if (requiredPermission && !hasPermission(requiredPermission)) {
     return <NoPermission />
   }
@@ -54,7 +65,9 @@ function ProtectedRoute({
   return <>{children}</>
 }
 
-/** 仅需登录，不需要工作空间 */
+/**
+ * 仅需登录的路由守卫（不要求已选择/激活工作空间）
+ */
 function AuthOnlyRoute({ children }: { children: React.ReactNode }) {
   const { t } = useTranslation('common')
   const { isAuthenticated, isLoading } = useAuth()
@@ -74,7 +87,9 @@ function AuthOnlyRoute({ children }: { children: React.ReactNode }) {
   return <>{children}</>
 }
 
-/** 根路径重定向：已登录 → /w/{slug}/，未登录 → /login */
+/**
+ * 根路径重定向：已登录 → 当前/首个工作空间首页，未登录 → 登录页
+ */
 function RootRedirect() {
   const { t } = useTranslation('common')
   const { isAuthenticated, isLoading, needsWorkspaceSetup } = useAuth()
@@ -93,10 +108,12 @@ function RootRedirect() {
     return <Navigate to='/login' replace />
   }
 
+  // 新用户尚未创建工作空间
   if (needsWorkspaceSetup) {
     return <Navigate to='/workspace/new' replace />
   }
 
+  // 优先使用上次访问的工作空间，否则取列表第一项
   const target = workspaces.find((w) => w.id === lastId) ?? workspaces[0]
   if (!target) {
     return (
@@ -126,6 +143,7 @@ function WorkspaceGuard() {
   const [ready, setReady] = useState(false)
   const [error, setError] = useState<string | null>(null)
 
+  // 根据 URL slug 激活对应工作空间（加载角色与权限）
   useEffect(() => {
     if (isLoading || !isAuthenticated || !slug) return
 
@@ -219,6 +237,7 @@ function WorkspaceGuard() {
   )
 }
 
+/** 浏览器路由表：公开页 + 工作空间嵌套路由 */
 export const router = createBrowserRouter([
   {
     path: '/login',

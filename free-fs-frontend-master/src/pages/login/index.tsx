@@ -1,3 +1,7 @@
+/**
+ * 登录页模块
+ * 通过 URL 参数 type 切换登录/注册/忘记密码表单，支持邀请注册 token
+ */
 import React, { Suspense } from 'react'
 import { useTranslation } from 'react-i18next'
 import { Card } from '@/components/ui/card'
@@ -8,18 +12,23 @@ import ForgotPasswordContent from './components/ForgotPasswordContent'
 import { LoginLanguageSwitcher } from './components/LoginLanguageSwitcher'
 import { useSearchParams } from 'react-router-dom'
 
+/** 登录页：左右分屏布局，左侧表单右侧装饰动画 */
 const LoginPage: React.FC = () => {
   const { t } = useTranslation('login')
   const [searchParams, setSearchParams] = useSearchParams()
+  // URL 参数决定当前展示的表单类型
   const type = searchParams.get('type') || 'login'
 
+  /** 切换表单类型并同步到 URL */
   const handleSwitchForm = (form: 'login' | 'register' | 'forgotPassword') => {
     const nextType = form === 'forgotPassword' ? 'forgot-password' : form
     setSearchParams({ type: nextType })
   }
 
+  // 邀请注册时携带的 token
   const inviteToken = searchParams.get('token') || undefined
 
+  /** 根据 type 渲染对应表单组件 */
   const renderContent = () => {
     switch (type) {
       case 'register':

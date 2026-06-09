@@ -1,3 +1,7 @@
+/**
+ * 公开分享页（匿名访问）
+ * 支持提取码验证、目录浏览、文件预览与 blob 下载
+ */
 import { useState, useEffect, useCallback, Fragment } from 'react'
 import { useTranslation } from 'react-i18next'
 import type { FileItem } from '@/types/file'
@@ -46,6 +50,7 @@ interface BreadcrumbItem {
   id: string
 }
 
+/** 分享链接访问页面，路由参数 shareToken 标识分享 */
 export default function SharePage() {
   const { t } = useTranslation('share')
   const { shareToken } = useParams<{ shareToken: string }>()

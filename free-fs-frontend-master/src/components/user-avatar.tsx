@@ -1,3 +1,7 @@
+/**
+ * @file 用户头像
+ * @description 根据用户名生成 fallback 字母，支持自定义尺寸与样式。
+ */
 import { cn } from '@/lib/utils'
 import { getAvatarFallback } from '@/utils/avatar'
 import { Avatar, AvatarFallback, AvatarImage } from '@/components/ui/avatar'
@@ -10,6 +14,7 @@ interface UserAvatarProps {
   fallbackClassName?: string
 }
 
+/** 通用用户头像：有图片则显示，否则显示姓名首字母 fallback */
 export function UserAvatar({
   name,
   avatar,

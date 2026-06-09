@@ -1,15 +1,22 @@
+/**
+ * 登录表单容器（旧版）
+ * 本地 state 切换登录/注册/忘记密码，新版登录页已改用 URL 参数
+ */
 import { useState } from 'react'
 import { useTranslation } from 'react-i18next'
 import ForgotPasswordContent from './ForgotPasswordContent'
 import LoginFormContent from './LoginFormContent'
 import RegisterFormContent from './RegisterFormContent'
 
+/** 当前展示的表单类型 */
 type FormType = 'login' | 'register' | 'forgotPassword'
 
+/** 登录/注册/忘记密码表单切换容器 */
 export default function LoginForm() {
   const { t } = useTranslation('login')
   const [currentForm, setCurrentForm] = useState<FormType>('login')
 
+  // 各表单类型对应的标题文案
   const formTitles: Record<FormType, string> = {
     login: t('formTitleLogin'),
     register: t('formTitleRegister'),
@@ -30,6 +37,7 @@ export default function LoginForm() {
         </div>
       </div>
 
+      {/* 按 currentForm 条件渲染对应表单 */}
       {currentForm === 'login' && (
         <LoginFormContent onSwitchForm={setCurrentForm} />
       )}

@@ -1,3 +1,7 @@
+/**
+ * 登录表单内容
+ * 支持密码登录与邮箱验证码登录，处理记住登录与邀请重定向
+ */
 import { useEffect, useState } from 'react'
 import { useTranslation } from 'react-i18next'
 import { userApi } from '@/api'

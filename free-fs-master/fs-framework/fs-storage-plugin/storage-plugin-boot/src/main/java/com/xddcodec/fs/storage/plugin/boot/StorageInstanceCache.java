@@ -12,6 +12,13 @@ import java.util.concurrent.ConcurrentHashMap;
 import java.util.concurrent.locks.Lock;
 import java.util.function.Supplier;
 
+/**
+ * 存储实例缓存
+ * <p>按 cacheKey（configId:platformIdentifier）缓存已初始化的 {@link com.xddcodec.fs.storage.plugin.core.IStorageOperationService} 实例，
+ * 使用 Striped Lock 保证并发创建时的线程安全，并维护 configId 反向索引以支持按配置 ID 快速失效。</p>
+ *
+ * @author xddcode
+ */
 @Slf4j
 @Component
 public class StorageInstanceCache {

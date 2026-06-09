@@ -1,3 +1,7 @@
+/**
+ * 文件列表视图
+ * 表格式展示文件，支持排序、多选、拖拽移动与无限滚动
+ */
 import { useState, useEffect, type RefObject } from 'react'
 import { useTranslation } from 'react-i18next'
 import type { FileItem, SortOrder } from '@/types/file'

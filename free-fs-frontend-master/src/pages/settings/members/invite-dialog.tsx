@@ -1,3 +1,7 @@
+/**
+ * 邀请成员弹窗
+ * 输入邮箱与角色，发送工作空间邀请链接
+ */
 import { useState, useEffect } from 'react'
 import { useTranslation } from 'react-i18next'
 import { toast } from 'sonner'
@@ -30,6 +34,7 @@ interface InviteDialogProps {
   onSuccess: () => void
 }
 
+/** 邀请成员弹窗：填写邮箱与角色后发送邀请 */
 export function InviteDialog({
   open,
   onOpenChange,
@@ -48,6 +53,7 @@ export function InviteDialog({
     }
   }, [open, roles, roleId])
 
+  /** 校验并发送工作空间邀请 */
   const handleSubmit = async (e: React.FormEvent) => {
     e.preventDefault()
     if (!email || !roleId) {

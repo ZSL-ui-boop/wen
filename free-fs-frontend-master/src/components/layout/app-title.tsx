@@ -1,3 +1,7 @@
+/**
+ * @file 应用标题
+ * @description 侧栏顶部的 Logo 与应用名称、版本号展示。
+ */
 import { APP_VERSION } from '@/config/version'
 import { Link } from 'react-router-dom'
 import {
@@ -8,6 +12,7 @@ import {
 } from '@/components/ui/sidebar'
 import { Logo } from '@/components/logo'
 
+/** 侧栏 Logo 与应用标题，折叠时仅显示图标 */
 export function AppTitle() {
   const { state } = useSidebar()
 

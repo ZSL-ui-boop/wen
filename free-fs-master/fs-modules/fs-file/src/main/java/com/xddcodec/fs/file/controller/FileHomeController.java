@@ -14,6 +14,12 @@ import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RestController;
 
+/**
+ * 文件首页控制器
+ * <p>聚合工作空间存储用量、最近文件、分享统计及数据大屏指标。</p>
+ *
+ * @author xddcode
+ */
 @Validated
 @Slf4j
 @RestController

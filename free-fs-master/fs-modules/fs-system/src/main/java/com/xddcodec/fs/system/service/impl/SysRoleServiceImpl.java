@@ -32,9 +32,10 @@ import static com.xddcodec.fs.system.domain.table.SysRoleTableDef.SYS_ROLE;
 
 /**
  * 角色服务实现类
+ * <p>管理工作空间内系统预置角色与自定义角色的 CRUD，以及角色-权限绑定。
+ * 系统角色（admin/member/viewer）不可删除，自定义角色可自由配置权限码。</p>
  *
- * @Author: xddcode
- * @Date: 2026/3/30 10:11
+ * @author xddcode
  */
 @Service
 @RequiredArgsConstructor

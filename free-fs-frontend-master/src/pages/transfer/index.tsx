@@ -1,3 +1,7 @@
+/**
+ * 传输任务页
+ * 展示上传中/下载中/已完成任务，支持暂停、恢复、取消、重试与清空
+ */
 import { useState, useEffect } from 'react'
 import { useTranslation } from 'react-i18next'
 import { useTransferStore } from '@/store/transfer'
@@ -15,6 +19,7 @@ import { SidebarTrigger } from '@/components/ui/sidebar'
 import { Tabs, TabsList, TabsTrigger } from '@/components/ui/tabs'
 import TransferTable from './components/TransferTable'
 
+/** 传输任务管理页面 */
 export default function TransferPage() {
   const { t } = useTranslation('transfer')
   const { t: tc } = useTranslation('common')
@@ -43,6 +48,7 @@ export default function TransferPage() {
         ? []
         : completedTasks
 
+  // SSE 连接就绪后拉取传输任务列表
   useEffect(() => {
     const initTransfer = async () => {
       if (sseConnected) {

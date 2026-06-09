@@ -1,3 +1,7 @@
+/**
+ * 文件网格视图
+ * 卡片式展示文件，支持多选、拖拽移动、右键菜单与无限滚动
+ */
 import { useState, useEffect, type RefObject } from 'react'
 import { useTranslation } from 'react-i18next'
 import type { FileItem } from '@/types/file'

@@ -1,3 +1,7 @@
+/**
+ * 工作空间设置页
+ * 编辑名称/描述、转让或解散工作空间（需 member:manage 权限）
+ */
 import { useState, useEffect } from 'react'
 import { useTranslation } from 'react-i18next'
 import { useNavigate } from 'react-router-dom'
@@ -25,6 +29,7 @@ import {
   AlertDialogTitle,
 } from '@/components/ui/alert-dialog'
 
+/** 设置 - 工作空间信息管理面板 */
 export function SettingsWorkspace() {
   const { t } = useTranslation('settings')
   const navigate = useNavigate()

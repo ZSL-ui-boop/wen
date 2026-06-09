@@ -1,3 +1,7 @@
+/**
+ * 角色权限设置页
+ * 自定义角色的增删改与权限分配
+ */
 import { useState, useEffect, useCallback } from 'react'
 import { useTranslation } from 'react-i18next'
 import { toast } from 'sonner'
@@ -32,12 +36,14 @@ import {
   AlertDialogTitle,
 } from '@/components/ui/alert-dialog'
 
+/** 判断是否为系统预设角色（不可删除） */
 function isPresetRole(r: RoleListItem) {
   if (r.roleType === 0) return true
   if (r.roleType === 1) return false
   return ['admin', 'member', 'viewer'].includes(r.roleCode)
 }
 
+/** 设置 - 角色权限管理面板 */
 export function SettingsRoles() {
   const { t } = useTranslation('settings')
   const { hasPermission } = usePermission()

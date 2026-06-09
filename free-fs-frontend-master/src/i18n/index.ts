@@ -1,3 +1,9 @@
+/**
+ * 国际化（i18n）配置
+ *
+ * 使用 i18next + react-i18next，聚合中英文各模块文案；
+ * 语言选择持久化到 localStorage，并通过 getRequestLangHeader 同步到 API 请求头。
+ */
 import i18n from 'i18next'
 import LanguageDetector from 'i18next-browser-languagedetector'
 import { initReactI18next } from 'react-i18next'
@@ -29,13 +35,13 @@ import zhStorage from '@/locales/zh/storage.json'
 import zhTransfer from '@/locales/zh/transfer.json'
 import zhWorkspace from '@/locales/zh/workspace.json'
 
-/** 【核心亮点-国际化】i18next + react-i18next，中英文资源聚合；语言影响请求头 lang。 */
+/** 应用内简化的语言代码 */
 export type AppLang = 'zh' | 'en'
 
 /** 与后端约定的 BCP 47 语言码，用于请求头 `lang` */
 export type ApiLang = 'zh-CN' | 'en-US'
 
-/** i18n 当前语言，与 `AppLang` / Select 选项一致 */
+/** 获取当前应用语言（zh / en） */
 export function getAppLang(): AppLang {
   const lng = i18n.resolvedLanguage || i18n.language || 'zh'
   if (lng.startsWith('zh')) return 'zh'
@@ -43,7 +49,7 @@ export function getAppLang(): AppLang {
   return 'zh'
 }
 
-/** 与后端约定的语言码，用于请求头 `lang`（zh-CN / en-US） */
+/** 转换为 API 请求头使用的语言码 */
 export function getRequestLangHeader(): ApiLang {
   return getAppLang() === 'en' ? 'en-US' : 'zh-CN'
 }
@@ -84,7 +90,7 @@ void i18n
         workspace: zhWorkspace,
       },
     },
-    /** 默认中文；勿设置 `lng`，否则会覆盖 localStorage 里用户选的语言（如登录页切英文） */
+    /** 默认中文；勿设置 `lng`，否则会覆盖 localStorage 里用户选的语言 */
     fallbackLng: 'zh',
     supportedLngs: ['zh', 'en'],
     load: 'languageOnly',

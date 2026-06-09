@@ -1,3 +1,7 @@
+/**
+ * @file 表格列显示选项
+ * @description 下拉菜单控制 TanStack Table 各列的显示/隐藏。
+ */
 import { DropdownMenuTrigger } from '@radix-ui/react-dropdown-menu'
 import { MixerHorizontalIcon } from '@radix-ui/react-icons'
 import { type Table } from '@tanstack/react-table'
@@ -14,6 +18,7 @@ type DataTableViewOptionsProps<TData> = {
   table: Table<TData>
 }
 
+/** 列可见性切换下拉（仅展示可隐藏的数据列） */
 export function DataTableViewOptions<TData>({
   table,
 }: DataTableViewOptionsProps<TData>) {

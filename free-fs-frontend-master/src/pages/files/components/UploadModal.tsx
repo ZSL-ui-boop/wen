@@ -1,3 +1,7 @@
+/**
+ * 文件上传弹窗
+ * 支持单文件/文件夹选择，批量创建传输任务并限制预览数量
+ */
 import { useState, useEffect, useCallback, memo } from 'react'
 import { useTranslation } from 'react-i18next'
 import { useTransferStore } from '@/store/transfer'

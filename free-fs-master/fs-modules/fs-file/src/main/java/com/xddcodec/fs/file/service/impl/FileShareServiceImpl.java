@@ -63,9 +63,10 @@ import static com.xddcodec.fs.file.domain.table.FileShareTableDef.FILE_SHARE;
 
 /**
  * 文件分享服务实现类
+ * <p>管理分享记录的创建/取消、提取码校验、外链文件列表与下载。
+ * 外链访问会记录访问日志并校验文件是否仍在分享树范围内，防止越权浏览。</p>
  *
- * @Author: xddcode
- * @Date: 2025/10/30 10:02
+ * @author xddcode
  */
 @Slf4j
 @Service
@@ -137,6 +138,10 @@ public class FileShareServiceImpl extends ServiceImpl<FileShareMapper, FileShare
         return vo;
     }
 
+    /**
+     * 创建分享
+     * <p>根据过期类型计算失效时间，可选生成 4 位提取码，并批量写入分享项关联表。</p>
+     */
     @Override
     @Transactional(rollbackFor = Exception.class)
     public FileShareVO createShare(CreateShareCmd cmd) {
@@ -246,6 +251,10 @@ public class FileShareServiceImpl extends ServiceImpl<FileShareMapper, FileShare
         this.cancelShares(shareIdList);
     }
 
+    /**
+     * 校验分享提取码
+     * <p>故意延迟 200ms 以增加暴力破解成本。</p>
+     */
     @Override
     public boolean verifyShareCode(VerifyShareCodeCmd cmd) {
         // 故意延迟200ms，增加暴力破解成本

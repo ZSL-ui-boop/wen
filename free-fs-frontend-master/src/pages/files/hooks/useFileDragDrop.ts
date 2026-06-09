@@ -1,6 +1,13 @@
+/**
+ * 文件拖拽移动 Hook
+ *
+ * 支持单文件/多选拖拽到文件夹，含列表/网格两种视图的
+ * 自定义 dragImage 与放置目标高亮。
+ */
 import { useState, useCallback } from 'react'
 import type { FileItem } from '@/types/file'
 
+/** 拖拽过程中的 UI 状态 */
 export interface DragDropState {
   isDragging: boolean
   draggedItems: FileItem[]
@@ -8,6 +15,11 @@ export interface DragDropState {
   dropTargetName: string | null
 }
 
+/**
+ * @param selectedKeys 当前多选中的文件 id 列表
+ * @param fileList 当前目录文件列表（用于解析多选拖拽项）
+ * @param onMove 放置到目标文件夹时的移动回调
+ */
 export function useFileDragDrop(
   selectedKeys: string[],
   fileList: FileItem[],

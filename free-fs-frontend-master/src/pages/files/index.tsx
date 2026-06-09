@@ -1,3 +1,7 @@
+/**
+ * 文件管理页
+ * 支持列表/网格视图、多选批量操作、拖拽移动、上传及特殊视图（收藏/回收站/分享等）
+ */
 import { useState, useEffect, useRef, useMemo } from 'react'
 import { useTranslation } from 'react-i18next'
 import type { FileItem } from '@/types/file'
@@ -56,6 +60,7 @@ import { useFileOperations } from './hooks/useFileOperations'
 
 type ViewMode = 'list' | 'grid'
 
+/** 文件管理主页面组件 */
 export default function FilesPage() {
   const { t } = useTranslation('files')
   const { t: tc } = useTranslation('common')

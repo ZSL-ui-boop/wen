@@ -1,3 +1,9 @@
+/**
+ * 文件列表数据 Hook
+ *
+ * 职责：分页加载文件列表、无限滚动、排序/搜索/视图筛选、
+ * 面包屑同步，以及本地增量更新（收藏等乐观 UI）。
+ */
 import {
   useState,
   useCallback,
@@ -18,6 +24,7 @@ import { useToolbarSearch } from '@/hooks/useToolbarSearch'
 /** 每页条数（与后端约定一致） */
 export const FILE_LIST_PAGE_SIZE = 100
 
+/** 合并分页结果，按 id 去重，避免 loadMore 重复项 */
 function mergeFileRecords(prev: FileItem[], incoming: FileItem[]): FileItem[] {
   const seen = new Set(prev.map((f) => f.id))
   const merged = [...prev]
@@ -30,6 +37,10 @@ function mergeFileRecords(prev: FileItem[], incoming: FileItem[]): FileItem[] {
   return merged
 }
 
+/**
+ * 文件管理页列表状态与数据拉取
+ * @returns 列表数据、分页、搜索、排序、导航等方法
+ */
 export function useFileList() {
   const [searchParams] = useSearchParams()
   const navigate = useNavigate()
@@ -60,6 +71,7 @@ export function useFileList() {
   const fileType = searchParams.get('type')
   const isDirFilter = searchParams.get('isDir') === 'true'
 
+  /** 根据 parentId 拉取文件夹路径并更新面包屑 */
   const updateBreadcrumbPath = useCallback(async (parentId?: string) => {
     if (!parentId) {
       setBreadcrumbPath([])
@@ -81,6 +93,7 @@ export function useFileList() {
     }
   }, [])
 
+  /** 根据当前筛选/排序条件构建分页查询参数 */
   const buildQuery = useCallback(
     (pageNum: number) => {
       const isFavoritesView = viewType === 'favorites'
@@ -110,6 +123,7 @@ export function useFileList() {
     ]
   )
 
+  /** 首屏加载（重置分页，必要时更新面包屑） */
   const fetchInitial = useCallback(async () => {
     const gen = ++fetchGenerationRef.current
     setLoading(true)
@@ -167,6 +181,7 @@ export function useFileList() {
     fileListRef.current = fileList
   }, [total, fileList])
 
+  /** 加载下一页并合并结果，检测是否已无更多数据 */
   const loadMore = useCallback(async () => {
     if (loading || loadingMore || loadMoreInFlightRef.current) return
     if (noMorePages) return
@@ -235,6 +250,7 @@ export function useFileList() {
   const hasMore =
     !noMorePages && total > 0 && fileList.length < total
 
+  /** 进入子文件夹（保留当前 viewMode 等参数） */
   const enterFolder = useCallback(
     (folderId: string, viewModeParam: string) => {
       const params = new URLSearchParams(searchParams)
@@ -245,6 +261,7 @@ export function useFileList() {
     [searchParams, navigate, slug]
   )
 
+  /** 面包屑点击跳转至指定文件夹 */
   const navigateToFolder = useCallback(
     (folderId?: string) => {
       const params = new URLSearchParams(searchParams)

@@ -1,3 +1,7 @@
+/**
+ * 个人资料设置页
+ * 包含基本信息编辑、账号安全与用户 ID 复制
+ */
 import { useState } from 'react'
 import { useTranslation } from 'react-i18next'
 import { useAuth } from '@/contexts/auth-context'
@@ -11,6 +15,7 @@ import {
 import { ProfileForm } from './profile-form'
 import { AccountSecuritySection } from './account-security-section'
 
+/** 设置 - 个人资料面板 */
 export function SettingsProfile() {
   const { t } = useTranslation('settings')
   const { user } = useAuth()

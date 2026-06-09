@@ -1,3 +1,7 @@
+/**
+ * @file 全局命令菜单（文件搜索）
+ * @description ⌘K 触发的搜索对话框，按类型筛选后跳转文件页。
+ */
 import {
   useEffect,
   useLayoutEffect,
@@ -60,6 +64,9 @@ function buildFilesSearchHref(keyword: string, scope: SearchScopeId): string {
   return q ? `/files?${q}` : '/files'
 }
 
+/**
+ * 全局文件搜索命令面板。
+ */
 export function CommandMenu() {
   const { t } = useTranslation('common')
   const { open, setOpen } = useSearch()

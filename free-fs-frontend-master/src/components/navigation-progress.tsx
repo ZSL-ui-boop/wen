@@ -1,6 +1,11 @@
+/**
+ * @file 路由导航进度条
+ * @description 监听内部链接点击与 popstate，在 DOM 变化后完成顶部 LoadingBar。
+ */
 import { useEffect, useRef } from 'react'
 import LoadingBar from 'react-top-loading-bar'
 
+/** 页面顶部导航进度条（react-top-loading-bar） */
 export function NavigationProgress() {
   const ref = useRef<any>(null)
 
@@ -13,7 +18,7 @@ export function NavigationProgress() {
       isNavigating = true
       ref.current.continuousStart()
 
-      // 超时保护：最多显示 1 秒
+      // 超时保护：最多显示 1 秒，防止进度条卡住
       timeoutId = window.setTimeout(() => {
         if (ref.current) {
           ref.current.complete()
@@ -49,7 +54,7 @@ export function NavigationProgress() {
       startProgress()
     }
 
-    // 监听 DOM 变化来检测路由完成
+    // 监听 DOM 变化推断 SPA 路由渲染完成
     let mutationTimeout: number
     const observer = new MutationObserver(() => {
       window.clearTimeout(mutationTimeout)

@@ -19,9 +19,9 @@ import static com.xddcodec.fs.system.domain.table.SysUserTableDef.SYS_USER;
 
 /**
  * 账号密码登录策略
+ * <p>支持用户名或邮箱 + 密码登录，密码经 SaSecureUtil 加盐哈希比对。</p>
  *
- * @Author: xddcode
- * @Date: 2026/4/2 09:59
+ * @author xddcode
  */
 @Component
 @RequiredArgsConstructor

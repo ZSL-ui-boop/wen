@@ -27,9 +27,10 @@ import java.util.List;
 
 /**
  * 文件资源控制器
+ * <p>提供文件列表/详情、目录管理、回收站、收藏等核心 CRUD 接口。
+ * 写操作（删除、重命名、移动等）需 {@code file:write} 权限。</p>
  *
- * @Author: xddcode
- * @Date: 2025/5/8 10:00
+ * @author xddcode
  */
 @Validated
 @Slf4j

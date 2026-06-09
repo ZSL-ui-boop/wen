@@ -36,10 +36,11 @@ import static com.mybatisflex.core.query.QueryMethods.notExists;
 import static com.xddcodec.fs.file.domain.table.FileInfoTableDef.FILE_INFO;
 
 /**
- * 回收站服务接口实现
+ * 回收站服务实现
+ * <p>提供逻辑删除文件的列表查询、批量恢复与永久删除。
+ * 永久删除时在事务提交后异步清理存储端对象，避免长事务阻塞。</p>
  *
- * @Author: xddcode
- * @Date: 2025/5/8 9:35
+ * @author xddcode
  */
 @Slf4j
 @Service

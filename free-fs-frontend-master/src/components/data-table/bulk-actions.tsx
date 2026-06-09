@@ -1,3 +1,7 @@
+/**
+ * @file 表格批量操作栏
+ * @description 选中行时在页面底部固定显示的操作工具栏，支持键盘导航与读屏播报。
+ */
 import { useState, useEffect, useRef } from 'react'
 import { type Table } from '@tanstack/react-table'
 import { X } from 'lucide-react'
@@ -17,14 +21,11 @@ type DataTableBulkActionsProps<TData> = {
 }
 
 /**
- * A modular toolbar for displaying bulk actions when table rows are selected.
+ * 表格批量操作浮动工具栏；无选中行时不渲染。
  *
- * @template TData The type of data in the table.
- * @param {object} props The component props.
- * @param {Table<TData>} props.table The react-table instance.
- * @param {string} props.entityName The name of the entity being acted upon (e.g., "task", "user").
- * @param {React.ReactNode} props.children The action buttons to be rendered inside the toolbar.
- * @returns {React.ReactNode | null} The rendered component or null if no rows are selected.
+ * @param table - TanStack Table 实例
+ * @param entityName - 实体名称，用于无障碍文案（如 task、user）
+ * @param children - 自定义批量操作按钮
  */
 export function DataTableBulkActions<TData>({
   table,
@@ -36,6 +37,7 @@ export function DataTableBulkActions<TData>({
   const toolbarRef = useRef<HTMLDivElement>(null)
   const [announcement, setAnnouncement] = useState('')
 
+  /** 选中数量变化时向屏幕阅读器播报 */
   useEffect(() => {
     if (selectedCount > 0) {
       const message = `${selectedCount} ${entityName}${selectedCount > 1 ? 's' : ''} selected. Bulk actions toolbar is available.`

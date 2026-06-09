@@ -19,9 +19,9 @@ import static com.xddcodec.fs.file.domain.table.FileShareAccessRecordTableDef.FI
 
 /**
  * 分享访问记录服务实现
+ * <p>记录分享外链的访问 IP、地域及时间，供分享创建者查看访问统计。</p>
  *
- * @Author: xddcode
- * @Date: 2025/10/30 9:35
+ * @author xddcode
  */
 @Service
 @RequiredArgsConstructor

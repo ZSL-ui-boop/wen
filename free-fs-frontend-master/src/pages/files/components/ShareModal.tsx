@@ -1,3 +1,7 @@
+/**
+ * 文件分享弹窗
+ * 创建/更新分享链接，配置有效期、提取码与访问范围
+ */
 import { useState, useEffect, useMemo, useCallback } from 'react'
 import { useTranslation } from 'react-i18next'
 import { shareFiles } from '@/api'

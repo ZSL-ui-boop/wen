@@ -1,3 +1,7 @@
+/**
+ * 个人资料编辑表单
+ * 昵称、头像等基本信息修改，含 zod 校验
+ */
 import { useState, useEffect, useRef, useMemo } from 'react'
 import { useTranslation } from 'react-i18next'
 import { z } from 'zod'
@@ -25,6 +29,7 @@ import {
 
 type ProfileFormValues = { nickname: string }
 
+/** 从昵称提取头像 fallback 文字（最多 2 个字符） */
 function initialsFromNickname(nickname: string) {
   const t = nickname.trim()
   if (!t) return '?'
@@ -33,6 +38,7 @@ function initialsFromNickname(nickname: string) {
 
 const AVATAR_MAX_BYTES = 5 * 1024 * 1024
 
+/** 个人资料编辑：头像上传与昵称修改（失焦自动保存） */
 export function ProfileForm() {
   const { t } = useTranslation('settings')
   const { user, updateUser } = useAuth()
@@ -59,6 +65,7 @@ export function ProfileForm() {
     },
   })
 
+  // 首次从 auth 上下文同步昵称，避免覆盖用户正在编辑的内容
   useEffect(() => {
     if (user?.nickname && !initializedRef.current) {
       form.reset({
@@ -68,6 +75,7 @@ export function ProfileForm() {
     }
   }, [user?.nickname, form])
 
+  /** 保存昵称变更到服务端并刷新 auth 上下文 */
   async function saveChanges(data: ProfileFormValues) {
     if (!user) return
 
@@ -87,6 +95,7 @@ export function ProfileForm() {
     }
   }
 
+  /** 昵称失焦时校验，有变更则自动保存 */
   const handleNicknameBlur = async () => {
     const values = form.getValues()
     const ok = await form.trigger('nickname')
@@ -95,6 +104,7 @@ export function ProfileForm() {
     await saveChanges(values)
   }
 
+  /** 选择并上传头像图片（限制类型与 5MB 大小） */
   async function handleAvatarChange(e: React.ChangeEvent<HTMLInputElement>) {
     const file = e.target.files?.[0]
     e.target.value = ''

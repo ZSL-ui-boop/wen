@@ -1,3 +1,7 @@
+/**
+ * @file 侧边栏导航分组
+ * @description 根据路由与侧栏状态渲染平铺链接、可折叠子菜单或折叠态下拉菜单。
+ */
 import { type ReactNode } from 'react'
 import { useTranslation } from 'react-i18next'
 import { RiArrowRightSLine } from '@remixicon/react'
@@ -36,6 +40,7 @@ import {
   type SidebarNavIconPair,
 } from './types'
 
+/** 导航项图标：选中时使用 fill 变体，否则使用 line 变体 */
 function NavItemIcon({
   icon,
   active,
@@ -64,6 +69,9 @@ function stripSlugPrefix(fullPath: string): string {
   return match ? match[1] || '/' : fullPath
 }
 
+/**
+ * 单个导航分组：按项类型分发到链接、折叠菜单或折叠态下拉。
+ */
 export function NavGroup({ titleKey, items }: NavGroupProps) {
   const { t } = useTranslation('layout')
   const { state, isMobile } = useSidebar()
@@ -79,6 +87,7 @@ export function NavGroup({ titleKey, items }: NavGroupProps) {
         {items.map((item) => {
           const key = `${item.titleKey}-${item.url}`
 
+          // 无子项：渲染为普通链接
           if (!item.items)
             return (
               <SidebarMenuLink
@@ -89,6 +98,7 @@ export function NavGroup({ titleKey, items }: NavGroupProps) {
               />
             )
 
+          // 侧栏折叠且非移动端：子项用下拉菜单展示
           if (state === 'collapsed' && !isMobile)
             return (
               <SidebarMenuCollapsedDropdown
@@ -113,10 +123,12 @@ export function NavGroup({ titleKey, items }: NavGroupProps) {
   )
 }
 
+/** 导航项角标（如 New、Beta） */
 function NavBadge({ children }: { children: ReactNode }) {
   return <Badge className='rounded-full px-1 py-0 text-xs'>{children}</Badge>
 }
 
+/** 单层导航链接 */
 function SidebarMenuLink({
   item,
   href,
@@ -147,6 +159,7 @@ function SidebarMenuLink({
   )
 }
 
+/** 展开态下的可折叠子导航 */
 function SidebarMenuCollapsible({
   item,
   href,
@@ -208,6 +221,7 @@ function SidebarMenuCollapsible({
   )
 }
 
+/** 折叠态侧栏：点击父项弹出子菜单下拉 */
 function SidebarMenuCollapsedDropdown({
   item,
   href,
@@ -266,6 +280,9 @@ function SidebarMenuCollapsedDropdown({
   )
 }
 
+/**
+ * 判断导航项是否与当前路径匹配（含 query 剥离与子路径前缀匹配）。
+ */
 function checkIsActive(href: string, item: NavItem, mainNav = false) {
   return (
     href === item.url ||

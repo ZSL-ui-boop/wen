@@ -1,3 +1,7 @@
+/**
+ * 回收站视图
+ * 分页展示已删除文件，支持恢复、永久删除与清空回收站
+ */
 import { useState, useEffect, useMemo, useCallback, useRef } from 'react'
 import { useTranslation } from 'react-i18next'
 import {

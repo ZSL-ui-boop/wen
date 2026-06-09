@@ -1,3 +1,7 @@
+/**
+ * 新建工作空间页
+ * 填写名称、标识符与描述，创建后自动激活并跳转至该空间
+ */
 import { useEffect, useMemo, useState } from 'react'
 import { useTranslation } from 'react-i18next'
 import { useNavigate } from 'react-router-dom'
@@ -20,6 +24,7 @@ import {
 } from '@/components/ui/card'
 import { Logo } from '@/components/logo'
 
+/** 根据用户名生成默认工作空间 slug（小写、连字符分隔，后缀 -ws） */
 function slugFromUsername(username?: string) {
   const base = username || ''
   return base
@@ -30,12 +35,14 @@ function slugFromUsername(username?: string) {
     : ''
 }
 
+/** 新建工作空间表单页 */
 export default function NewWorkspacePage() {
   const { t } = useTranslation('workspace')
   const navigate = useNavigate()
   const { loadWorkspaces, activateWorkspace, user } = useAuth()
   const workspaces = useWorkspaceStore((s) => s.workspaces)
   const uname = user?.nickname || user?.username
+  // 根据当前用户预填默认名称与 slug
   const { defaultName, defaultSlug } = useMemo(() => {
     const slug = slugFromUsername(uname)
     const name = uname ? t('new.defaultName', { name: uname }) : ''
@@ -46,14 +53,17 @@ export default function NewWorkspacePage() {
   const [name, setName] = useState('')
   const [slug, setSlug] = useState('')
   const [description, setDescription] = useState('')
+  // 用户手动编辑 slug 后，名称变更不再自动覆盖 slug
   const [slugTouched, setSlugTouched] = useState(false)
 
+  // 用户信息或语言变化时同步默认表单值
   useEffect(() => {
     setName(defaultName)
     setSlug(defaultSlug)
     setSlugTouched(false)
   }, [defaultName, defaultSlug])
 
+  /** 名称变更时，若 slug 未被手动修改则同步生成 slug */
   const handleNameChange = (value: string) => {
     setName(value)
     if (!slugTouched) {
@@ -66,6 +76,7 @@ export default function NewWorkspacePage() {
     }
   }
 
+  /** 提交创建请求，成功后刷新空间列表并跳转 */
   const handleSubmit = async (e: React.FormEvent) => {
     e.preventDefault()
     if (!name.trim() || !slug.trim()) {
@@ -91,6 +102,7 @@ export default function NewWorkspacePage() {
     }
   }
 
+  // 已有工作空间时显示返回按钮
   const canGoBack = workspaces.length > 0
 
   return (

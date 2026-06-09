@@ -1,3 +1,7 @@
+/**
+ * 忘记密码表单
+ * 邮箱验证码 + 新密码重置流程
+ */
 import { useState, useEffect } from 'react'
 import { useTranslation } from 'react-i18next'
 import { userApi } from '@/api'
@@ -11,6 +15,7 @@ interface Props {
   onSwitchForm: (form: 'login' | 'register' | 'forgotPassword') => void
 }
 
+/** 忘记密码重置表单 */
 export default function ForgotPasswordContent({ onSwitchForm }: Props) {
   const { t } = useTranslation('login')
   const [loading, setLoading] = useState(false)

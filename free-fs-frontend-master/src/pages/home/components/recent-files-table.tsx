@@ -1,3 +1,7 @@
+/**
+ * 最近访问文件表格
+ * 从首页 API 拉取数据，支持点击进入目录或预览文件
+ */
 import * as React from 'react'
 import { useTranslation } from 'react-i18next'
 import { useQuery } from '@tanstack/react-query'
@@ -149,6 +153,7 @@ function TableSkeleton() {
   )
 }
 
+/** 最近文件表格容器：拉取首页数据并处理加载/错误态 */
 export function RecentFilesTable({ unit }: { unit: HomeUsedBytesUnit }) {
   const { t } = useTranslation('home')
   const { slug } = useParams<{ slug: string }>()

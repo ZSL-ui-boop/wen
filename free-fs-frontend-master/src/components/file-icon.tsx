@@ -1,3 +1,7 @@
+/**
+ * @file 文件类型图标
+ * @description 根据扩展名或类型字符串渲染对应 SVG 图标，文件夹使用动画 Folder 组件。
+ */
 import ArchiveIcon from '../../public/fi/archive'
 import AudioIcon from '../../public/fi/audio'
 import CodeIcon from '../../public/fi/code'

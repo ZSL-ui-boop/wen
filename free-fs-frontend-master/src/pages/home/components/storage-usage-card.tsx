@@ -1,3 +1,7 @@
+/**
+ * 存储用量概览卡片
+ * 展示已用/总量空间与快捷跳转，支持大屏主题变体
+ */
 import { HardDrive } from 'lucide-react'
 import { useTranslation } from 'react-i18next'
 import { useQuery } from '@tanstack/react-query'

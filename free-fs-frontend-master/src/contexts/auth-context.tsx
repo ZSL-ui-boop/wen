@@ -1,3 +1,9 @@
+/**
+ * 全局认证上下文
+ *
+ * 职责：管理登录态、用户信息、工作空间初始化与激活，
+ * 并在登录/激活工作空间后加载存储平台配置与传输设置。
+ */
 import {
   createContext,
   useContext,
@@ -18,22 +24,31 @@ import {
   getToken,
 } from '@/utils/auth'
 
+/** AuthContext 对外暴露的值与方法 */
 interface AuthContextType {
+  /** 是否已登录 */
   isAuthenticated: boolean
+  /** 当前用户基本信息 */
   user: UserInfo | null
+  /** accessToken */
   token: string | null
+  /** 是否需要引导用户创建工作空间（列表为空时） */
   needsWorkspaceSetup: boolean
+  /** 登录：保存 token、用户信息并加载工作空间列表 */
   login: (
     token: string,
     userInfo: UserInfo,
     remember?: boolean
   ) => Promise<void>
+  /** 登出：清除 token、用户与工作空间状态 */
   logout: () => void
+  /** 局部更新用户信息（同步到 user store） */
   updateUser: (patch: Partial<UserInfo>) => void
-  /** 加载工作空间列表（不激活） */
+  /** 加载工作空间列表（不激活），返回是否有可用空间 */
   loadWorkspaces: () => Promise<boolean>
-  /** 激活指定工作空间：设置 ID、加载角色权限、加载存储配置 */
+  /** 激活指定工作空间：设置 ID、加载角色权限、存储配置、传输设置 */
   activateWorkspace: (workspaceId: string) => Promise<void>
+  /** 初始化认证信息是否仍在进行 */
   isLoading: boolean
 }
 
@@ -43,6 +58,7 @@ interface AuthProviderProps {
   children: ReactNode
 }
 
+/** 认证 Provider，包裹应用根组件 */
 export function AuthProvider({ children }: AuthProviderProps) {
   const [isAuthenticated, setIsAuthenticated] = useState(false)
   const [user, setUser] = useState<UserInfo | null>(null)
@@ -52,6 +68,7 @@ export function AuthProvider({ children }: AuthProviderProps) {
 
   const wsStore = useWorkspaceStore
 
+  /** 拉取当前工作空间下启用的存储平台，写入 localStorage 供请求头使用 */
   const loadStoragePlatform = async () => {
     try {
       const activePlatforms = await getActiveStoragePlatforms()
@@ -73,6 +90,7 @@ export function AuthProvider({ children }: AuthProviderProps) {
     }
   }
 
+  /** 从 API 加载工作空间列表到 store */
   const loadWorkspaces = useCallback(async (): Promise<boolean> => {
     try {
       const workspaces = await workspaceApi.list()
@@ -91,6 +109,7 @@ export function AuthProvider({ children }: AuthProviderProps) {
     }
   }, [])
 
+  /** 切换并激活工作空间，并行加载存储平台与用户传输设置 */
   const activateWorkspace = useCallback(async (workspaceId: string) => {
     wsStore.getState().setCurrentWorkspaceId(workspaceId)
     localStorage.removeItem('current-storage-platform')
@@ -110,6 +129,7 @@ export function AuthProvider({ children }: AuthProviderProps) {
     ])
   }, [])
 
+  /** 应用启动时：若有 token 则恢复登录态并加载工作空间 */
   useEffect(() => {
     const initAuth = async () => {
       try {
@@ -126,6 +146,7 @@ export function AuthProvider({ children }: AuthProviderProps) {
             userInfo = await userApi.getUserInfo()
             userStore.setUserInfo(userInfo)
           } catch {
+            // API 失败时尝试从 persist 的 user store 恢复
             if (userStore.id) {
               userInfo = {
                 id: userStore.id,
@@ -160,6 +181,7 @@ export function AuthProvider({ children }: AuthProviderProps) {
     initAuth()
   }, [loadWorkspaces])
 
+  /** 登录成功后的状态写入与后续初始化 */
   const login = useCallback(
     async (accessToken: string, userInfo: UserInfo, remember = false) => {
       try {
@@ -181,6 +203,7 @@ export function AuthProvider({ children }: AuthProviderProps) {
     [loadWorkspaces]
   )
 
+  /** 登出并清理所有本地认证相关状态 */
   const logout = useCallback(() => {
     setToken(null)
     setUser(null)
@@ -197,6 +220,7 @@ export function AuthProvider({ children }: AuthProviderProps) {
     wsStore.getState().clear()
   }, [])
 
+  /** 合并 patch 更新用户并同步 user store */
   const updateUser = useCallback((patch: Partial<UserInfo>) => {
     setUser((prev) => {
       if (!prev) {
@@ -240,6 +264,7 @@ export function AuthProvider({ children }: AuthProviderProps) {
   return <AuthContext.Provider value={value}>{children}</AuthContext.Provider>
 }
 
+/** 获取认证上下文，必须在 AuthProvider 内使用 */
 export function useAuth() {
   const context = useContext(AuthContext)
   if (context === undefined) {

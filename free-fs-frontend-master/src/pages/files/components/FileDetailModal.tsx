@@ -1,3 +1,7 @@
+/**
+ * 文件详情弹窗
+ * 展示文件元信息（大小、类型、路径、修改时间等）
+ */
 import { useState, useEffect } from 'react'
 import type { FileItem, BreadcrumbItem } from '@/types/file'
 import { getFileDetail } from '@/api/file'

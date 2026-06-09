@@ -1,13 +1,26 @@
+/**
+ * 文件 MD5 / 指纹计算工具
+ *
+ * 大文件上传中用于：
+ * 1. calculateFileMD5 — 上传前整文件校验（秒传检测）
+ * 2. calculateBlobMD5 — 每个分片上传前的完整性校验
+ *
+ * 大文件（≥100MB）使用采样指纹而非全量 MD5，避免阻塞主线程过久。
+ */
 import SparkMD5 from 'spark-md5'
 
 import i18n from '@/i18n'
 
 /**
- * 快速指纹阈值：大于此大小的文件使用快速指纹（100MB）
+ * 快速指纹阈值（字节）
+ * ≥100MB 的文件使用采样指纹，否则计算完整 MD5
  */
 const FAST_FINGERPRINT_THRESHOLD = 100 * 1024 * 1024
 
-/** 让出主线程，避免大文件 MD5 连续计算导致「页面无响应」 */
+/**
+ * 让出主线程
+ * MD5 计算是 CPU 密集型操作，定期 yield 避免页面「无响应」提示
+ */
 function yieldToMain(): Promise<void> {
   return new Promise((resolve) => {
     if (typeof requestIdleCallback !== 'undefined') {
@@ -20,7 +33,12 @@ function yieldToMain(): Promise<void> {
 
 /**
  * 计算文件的快速指纹（采样策略）
- * 对于大文件，只计算头部、中部、尾部的 MD5，大幅提升速度
+ *
+ * 对大文件只读取头/中/尾各 2MB 采样计算 MD5，再与文件大小、修改时间组合，
+ * 速度远快于全量 MD5，用于秒传场景的近似匹配。
+ *
+ * @param file 待计算指纹的 File 对象
+ * @returns 固定长度的 MD5 风格指纹字符串
  */
 export function calculateFastFingerprint(file: File): Promise<string> {
   return new Promise((resolve, reject) => {
@@ -28,13 +46,13 @@ export function calculateFastFingerprint(file: File): Promise<string> {
     const spark = new SparkMD5.ArrayBuffer()
     const fileReader = new FileReader()
 
-    // 采样点：头部、中部、尾部
+    // 采样点列表：头部、中部（文件足够大时）、尾部（文件足够大时）
     const samples: { start: number; end: number }[] = []
 
-    // 头部
+    // 头部采样
     samples.push({ start: 0, end: Math.min(sampleSize, file.size) })
 
-    // 中部（如果文件足够大）
+    // 中部采样（文件 > 6MB 时才有意义）
     if (file.size > sampleSize * 3) {
       const middle = Math.floor(file.size / 2)
       samples.push({
@@ -43,7 +61,7 @@ export function calculateFastFingerprint(file: File): Promise<string> {
       })
     }
 
-    // 尾部（如果文件足够大）
+    // 尾部采样（文件 > 4MB 时）
     if (file.size > sampleSize * 2) {
       samples.push({
         start: Math.max(0, file.size - sampleSize),
@@ -53,13 +71,12 @@ export function calculateFastFingerprint(file: File): Promise<string> {
 
     let currentSample = 0
 
+    /** 顺序读取下一个采样点 */
     function loadNext() {
       if (currentSample >= samples.length) {
-        // 所有采样完成，生成指纹
-        // 格式：文件大小-最后修改时间-采样MD5
+        // 所有采样完成：组合 文件大小 + 修改时间 + 采样MD5，再 hash 得到固定长度标识
         const sampledMd5 = spark.end()
         const fingerprint = `${file.size}-${file.lastModified}-${sampledMd5}`
-        // 对组合指纹再做一次 MD5，得到固定长度的标识
         const finalMd5 = SparkMD5.hash(fingerprint)
         resolve(finalMd5)
         return
@@ -75,7 +92,7 @@ export function calculateFastFingerprint(file: File): Promise<string> {
         if (!e.target?.result) return
         spark.append(e.target.result as ArrayBuffer)
         currentSample += 1
-        await yieldToMain()
+        await yieldToMain() // 每读一个采样点让出主线程
         loadNext()
       })()
     }
@@ -89,12 +106,16 @@ export function calculateFastFingerprint(file: File): Promise<string> {
 }
 
 /**
- * 计算文件的完整MD5值（用于小文件或需要精确校验的场景）
+ * 计算文件的完整 MD5
+ * 以 2MB 为步长逐块读取并追加到 SparkMD5，适用于小文件精确校验
+ *
+ * @param file 待计算的 File 对象
+ * @returns 32 位十六进制 MD5 字符串
  */
 export function calculateFullFileMD5(file: File): Promise<string> {
   return new Promise((resolve, reject) => {
     const blobSlice = File.prototype.slice
-    const chunkSize = 2097152 // 2MB per chunk for MD5 calculation
+    const chunkSize = 2097152 // 2MB
     const chunks = Math.ceil(file.size / chunkSize)
     let currentChunk = 0
     const spark = new SparkMD5.ArrayBuffer()
@@ -132,9 +153,12 @@ export function calculateFullFileMD5(file: File): Promise<string> {
 }
 
 /**
- * 智能计算文件 MD5
- * - 小文件（< 100MB）：使用完整 MD5
- * - 大文件（>= 100MB）：使用快速指纹
+ * 智能选择 MD5 计算策略
+ * - 小文件（< 100MB）：完整 MD5，精确匹配
+ * - 大文件（≥ 100MB）：快速指纹，平衡速度与准确性
+ *
+ * @param file 待校验的 File 对象
+ * @returns MD5 或快速指纹字符串
  */
 export function calculateFileMD5(file: File): Promise<string> {
   if (file.size >= FAST_FINGERPRINT_THRESHOLD) {
@@ -145,7 +169,11 @@ export function calculateFileMD5(file: File): Promise<string> {
 }
 
 /**
- * 计算 Blob（分片）的 MD5；大块时分段追加并定期 yield，避免上传时分片校验卡死 UI。
+ * 计算 Blob（分片）的 MD5
+ * 分片可能达 5MB+，内部再以 2MB 子块读取并定期 yield，避免卡死 UI
+ *
+ * @param blob 上传分片 Blob
+ * @returns 分片 MD5 字符串
  */
 export async function calculateBlobMD5(blob: Blob): Promise<string> {
   const innerChunk = 2 * 1024 * 1024

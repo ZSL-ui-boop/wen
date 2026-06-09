@@ -1,3 +1,7 @@
+/**
+ * @file 应用面包屑
+ * @description 根据当前路由解析路径段，支持 `/w/:slug` 工作空间前缀。
+ */
 import { useTranslation } from 'react-i18next'
 import { useLocation, Link } from 'react-router-dom'
 import {
@@ -20,6 +24,9 @@ const BREADCRUMB_PATH_KEYS: Record<string, string> = {
   '/settings/transfer': 'transferSettings',
 }
 
+/**
+ * 从 pathname 解析工作空间前缀与后续路径段。
+ */
 function parseSegments(pathname: string): { homeHref: string; segments: string[] } {
   const ws = pathname.match(/^(\/w\/[^/]+)(?:\/(.*))?$/)
   if (ws) {
@@ -36,6 +43,9 @@ function parseSegments(pathname: string): { homeHref: string; segments: string[]
   }
 }
 
+/**
+ * 根据当前 URL 渲染面包屑导航。
+ */
 export function AppBreadcrumb() {
   const { t } = useTranslation('layout')
   const location = useLocation()

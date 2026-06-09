@@ -1,3 +1,7 @@
+/**
+ * 新建文件夹弹窗
+ * 输入文件夹名称并在指定父目录下创建
+ */
 import { useState, useEffect } from 'react'
 import { useTranslation } from 'react-i18next'
 import { Button } from '@/components/ui/button'

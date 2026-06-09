@@ -1,3 +1,7 @@
+/**
+ * @file 分面筛选器
+ * @description 多选 Popover + Command 列表，用于表格列的值域筛选。
+ */
 import * as React from 'react'
 import { CheckIcon, PlusCircledIcon } from '@radix-ui/react-icons'
 import { type Column } from '@tanstack/react-table'
@@ -30,6 +34,7 @@ type DataTableFacetedFilterProps<TData, TValue> = {
   }[]
 }
 
+/** 表格列的多选分面筛选下拉 */
 export function DataTableFacetedFilter<TData, TValue>({
   column,
   title,
@@ -91,6 +96,7 @@ export function DataTableFacetedFilter<TData, TValue>({
                   <CommandItem
                     key={option.value}
                     onSelect={() => {
+                      // 切换选中项并写回列 filter 值
                       if (isSelected) {
                         selectedValues.delete(option.value)
                       } else {

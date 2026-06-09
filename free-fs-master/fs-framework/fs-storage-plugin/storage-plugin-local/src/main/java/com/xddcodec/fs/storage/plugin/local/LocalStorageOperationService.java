@@ -17,10 +17,11 @@ import java.nio.file.Paths;
 import java.util.*;
 
 /**
- * 本地存储插件实现
+ * 本地磁盘存储插件实现
+ * <p>将文件写入服务器本地目录，通过 baseUrl 映射 HTTP 静态资源访问路径。
+ * 支持分片上传的临时文件合并，适用于开发环境及无云存储场景。</p>
  *
- * @Author: xddcode
- * @Date: 2024/10/26 17:00
+ * @author xddcode
  */
 @Slf4j
 @StoragePlugin(

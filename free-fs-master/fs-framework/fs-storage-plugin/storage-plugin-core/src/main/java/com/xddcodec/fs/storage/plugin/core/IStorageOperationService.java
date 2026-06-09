@@ -11,10 +11,10 @@ import java.util.Set;
 
 /**
  * 存储平台操作接口
- * 定义了存储平台的基本操作，如上传、下载、删除等
+ * <p>各存储插件（Local、OSS、S3 兼容等）的统一契约，涵盖单文件读写、分片上传、预签名 URL 等能力。
+ * 通过 {@link #createConfiguredInstance(StorageConfig)} 工厂方法按用户配置创建独立实例。</p>
  *
- * @Author: xddcode
- * @Date: 2026/01/12 22:06
+ * @author xddcode
  */
 public interface IStorageOperationService extends Closeable {
 

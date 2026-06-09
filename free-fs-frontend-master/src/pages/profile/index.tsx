@@ -1,5 +1,9 @@
+/**
+ * 个人资料占位页（独立路由，当前由设置弹窗承载主要功能）
+ */
 import { useTranslation } from 'react-i18next'
 
+/** 个人资料页面占位组件 */
 export default function ProfilePage() {
   const { t } = useTranslation('common')
   return (

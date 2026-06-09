@@ -1,3 +1,7 @@
+/**
+ * 分享页文件列表视图
+ * 根据分享 scope 控制预览/下载按钮可见性
+ */
 import { useTranslation } from 'react-i18next'
 import type { FileItem } from '@/types/file'
 import { Eye, Download } from 'lucide-react'
@@ -23,6 +27,7 @@ interface ShareFileListViewProps {
   onDownload: (file: FileItem) => void
 }
 
+/** 分享页列表模式文件展示 */
 export function ShareFileListView({
   fileList,
   scope,

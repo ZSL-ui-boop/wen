@@ -12,6 +12,12 @@ import java.util.List;
 
 import static com.xddcodec.fs.file.domain.table.FileShareItemTableDef.FILE_SHARE_ITEM;
 
+/**
+ * 分享文件关联项服务实现
+ * <p>维护分享记录与文件 ID 的多对多关联，供分享列表与外链浏览时查询根节点文件。</p>
+ *
+ * @author xddcode
+ */
 @Service
 public class FileShareItemServiceImpl extends ServiceImpl<FileShareItemMapper, FileShareItem> implements FileShareItemService {
 

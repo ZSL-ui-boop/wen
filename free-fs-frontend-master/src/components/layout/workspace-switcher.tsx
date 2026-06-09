@@ -1,3 +1,7 @@
+/**
+ * @file 工作空间切换器
+ * @description 侧栏顶部的当前工作空间展示与切换，支持跳转设置与创建新空间。
+ */
 import { useCallback, useState } from 'react'
 import { useTranslation } from 'react-i18next'
 import { useNavigate } from 'react-router-dom'
@@ -26,6 +30,9 @@ import {
   useSidebar,
 } from '@/components/ui/sidebar'
 
+/**
+ * 工作空间下拉切换器：激活目标空间后导航至对应 slug 路由。
+ */
 export function WorkspaceSwitcher() {
   const { t } = useTranslation('layout')
   const navigate = useNavigate()

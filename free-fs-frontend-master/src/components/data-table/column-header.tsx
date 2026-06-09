@@ -1,3 +1,7 @@
+/**
+ * @file 表格列头
+ * @description 可排序列的下拉菜单：升序、降序与隐藏列。
+ */
 import {
     ArrowDownIcon,
     ArrowUpIcon,
@@ -21,6 +25,7 @@ import {
       title: string
     }
   
+  /** 不可排序时仅渲染标题文本 */
   export function DataTableColumnHeader<TData, TValue>({
     column,
     title,

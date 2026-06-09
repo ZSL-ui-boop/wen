@@ -1,3 +1,7 @@
+/**
+ * 文件重命名弹窗
+ * 单文件重命名，自动聚焦并选中文件名（不含扩展名）
+ */
 import { useState, useEffect, useRef } from 'react'
 import { useTranslation } from 'react-i18next'
 import type { FileItem } from '@/types/file'
